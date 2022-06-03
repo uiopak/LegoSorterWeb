@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "johanndev",
+  "classifications": [
+    "Web",
+    "MVC",
+    "SPA"
+  ],
+  "identity": "JohannDev.DotNet.Web.Spa.ProjectTemplates.Vite.CSharp.6.0",
+  "name": "ASP.NET Core with Vite",
+  "shortName": "vite",
+  "preferNameDirectory": true,
+  "primaryOutputs": [
+    {
+      "path": "LegoSorterWeb.csproj"
+    }
+  ],
+  "sourceName": "LegoSorterWeb",
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        ".template.config/**",
+        ".files/**"
+      ]
+    },
+    {
+      "condition": "(!RequiresHttps)",
+      "exclude": [
+        "./ClientApp/aspnetcore-https.js"
+      ]
+    },
+    {
+      "condition": "(FrontendFramework == \"vanilla\" && !UseTypeScript)",
+      "source": ".files/vanilla/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"vanilla\" && UseTypeScript)",
+      "source": ".files/vanilla-ts/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"vue\" && !UseTypeScript)",
+      "source": ".files/vue/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"vue\" && UseTypeScript)",
+      "source": ".files/vue-ts/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"react\" && !UseTypeScript)",
+      "source": ".files/react/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"react\" && UseTypeScript)",
+      "source": ".files/react-ts/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"preact\" && !UseTypeScript)",
+      "source": ".files/preact/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"preact\" && UseTypeScript)",
+      "source": ".files/preact-ts/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"lit\" && !UseTypeScript)",
+      "source": ".files/lit/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"lit\" && UseTypeScript)",
+      "source": ".files/lit-ts/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"svelte\" && !UseTypeScript)",
+      "source": ".files/svelte/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"svelte\" && UseTypeScript)",
+      "source": ".files/svelte-ts/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"solid\" && !UseTypeScript)",
+      "source": ".files/solid/",
+      "target": "./ClientApp/"
+    },
+    {
+      "condition": "(FrontendFramework == \"solid\" && UseTypeScript)",
+      "source": ".files/solid-ts/",
+      "target": "./ClientApp/"
+    }
+  ],
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "FrontendFramework": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "vanilla",
+          "description": "Vanilla js"
+        },
+        {
+          "choice": "vue",
+          "description": "Vue js"
+        },
+        {
+          "choice": "react",
+          "description": "React"
+        },
+        {
+          "choice": "preact",
+          "description": "Preact"
+        },
+        {
+          "choice": "lit",
+          "description": "Lit-Element"
+        },
+        {
+          "choice": "svelte",
+          "description": "Svelte"
+        },
+        {
+          "choice": "solid",
+          "description": "Solid js"
+        }
+      ],
+      "description": "The Frontend-Framework that should be scaffolded",
+      "defaultValue": "vanilla"
+    },
+    "UseTypeScript": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, the Frontend-Framework will be scaffolded to use TypeScript",
+      "defaultValue": "false"
+    },
+    "UsePNPM": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, pmpm will by used instead of npm",
+      "defaultValue": "false"
+    },
+    "RequiresHttps": {
+      "type": "computed",
+      "value": "!NoHttps"
+    },
+    "NoHttps": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Whether to turn off HTTPS."
+    }
+  }
+}
