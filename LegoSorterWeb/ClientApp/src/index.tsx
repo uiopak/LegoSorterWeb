@@ -1,7 +1,21 @@
-/* @refresh reload */
 import { render } from 'solid-js/web';
-
 import './index.css';
-import App from './App';
+import { Router } from 'solid-app-router';
+import App from './app';
+import { createEffect } from 'solid-js';
+import { themeChange } from 'theme-change'
 
-render(() => <App />, document.getElementById('root') as HTMLElement);
+
+createEffect(() => {
+  themeChange(false)
+  // 👆 false parameter is required for react project
+})
+
+render(
+  () => (
+    <Router>
+      <App />
+    </Router>
+  ),
+  document.getElementById('root') as HTMLElement,
+);
