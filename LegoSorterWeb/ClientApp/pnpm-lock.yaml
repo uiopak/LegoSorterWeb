@@ -7,6 +7,7 @@ specifiers:
   solid-app-router: ^0.3.3
   solid-js: ^1.4.2
   tailwindcss: ^3.0.24
+  theme-change: ^2.0.2
   typescript: ^4.6.4
   vite: ^2.9.9
   vite-plugin-solid: ^2.2.6
@@ -14,6 +15,7 @@ specifiers:
 dependencies:
   solid-app-router: 0.3.3_solid-js@1.4.2
   solid-js: 1.4.2
+  theme-change: 2.0.2
 
 devDependencies:
   autoprefixer: 10.4.7_postcss@8.4.14
@@ -1245,6 +1247,10 @@ packages:
     transitivePeerDependencies:
       - ts-node
     dev: true
+
+  /theme-change/2.0.2:
+    resolution: {integrity: sha512-YvQqavf8nlGB3J7PdO0zLLhSLlgYhrqZL6By3FuzFIlWBsPTSPG/V98cHJllK3mmU97Jecei8XYiHalhy2umUw==}
+    dev: false
 
   /to-fast-properties/2.0.0:
     resolution: {integrity: sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4=}
