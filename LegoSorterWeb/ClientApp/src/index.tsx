@@ -1,7 +1,7 @@
 import { render } from 'solid-js/web';
 import './index.css';
 import { Router } from 'solid-app-router';
-import App from './app';
+import App from './app2';
 import { createEffect } from 'solid-js';
 import { themeChange } from 'theme-change'
 
