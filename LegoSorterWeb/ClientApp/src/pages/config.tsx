@@ -10,17 +10,16 @@ export default function About() {
             <h1 class="text-2xl font-bold">Config</h1>
 
             <p class="mt-4">Server connection data:</p>
-
             
             <div class="form-control w-full max-w-xs">
                 <label class="label">
                     <span class="label-text">Server address</span>
                 </label>
-                <Suspense fallback={<input type="text" placeholder="address" class="input input-bordered w-full max-w-xs"/>}>
+                <Suspense fallback={<input type="text" placeholder="address" class="input input-bordered w-full max-w-xs" />}>
                     <input type="text" placeholder="address" class="input input-bordered w-full max-w-xs" value={serverName.address()} />
                 </Suspense>
             </div>
-             
+
             <div class="form-control w-full max-w-xs">
                 <label class="label">
                     <span class="label-text">Server port</span>
@@ -32,6 +31,7 @@ export default function About() {
                     <span class="label-text"></span>
                 </label>
             </div>
+
             <button class="btn" innerText="Save" />
 
         </section>

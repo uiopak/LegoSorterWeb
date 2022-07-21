@@ -5,7 +5,7 @@ const fetchConfigOption = async (option: any) =>
     (await fetch(`/api/Configuration/${option}/`)).json();
 
 
-function fetchServerAddress(): Promise<string> {
+function fetchServerAddress(): Promise<any> {
     return fetchConfigOption("server_address");
 }
 

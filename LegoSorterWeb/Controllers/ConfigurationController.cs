@@ -47,8 +47,8 @@ namespace LegoSorterWeb.Controllers
             {
                 return NotFound();
             }
-
-            return configuration.Value;
+            Console.WriteLine(configuration.Value.ToString());
+            return $"\"{configuration.Value}\"";
         }
 
         // PUT: api/Configuration/5

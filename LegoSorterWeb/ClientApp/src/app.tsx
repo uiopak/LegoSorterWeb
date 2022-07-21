@@ -17,6 +17,11 @@ const App: Component = () => {
                     </a>
                 </div>
                 <div class="flex-none">
+                    <a class="btn btn-ghost normal-case text-xl" href="/belt">
+                        Belt
+                    </a>
+                </div>
+                <div class="flex-none">
                     <a class="btn btn-ghost normal-case text-xl" href="/config">
                         Config
                     </a>
