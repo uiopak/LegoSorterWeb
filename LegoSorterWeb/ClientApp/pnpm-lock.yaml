@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@microsoft/signalr': ^6.0.7
+  '@types/three': ^0.142.0
   autoprefixer: ^10.4.7
   daisyui: ^2.19.1
   postcss: ^8.4.14
@@ -16,6 +17,7 @@ specifiers:
 
 dependencies:
   '@microsoft/signalr': 6.0.7
+  '@types/three': 0.142.0
   solid-app-router: 0.4.1_solid-js@1.4.7
   solid-js: 1.4.7
   theme-change: 2.1.0
@@ -416,6 +418,16 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
     dev: true
+
+  /@types/three/0.142.0:
+    resolution: {integrity: sha512-YNVnlqthfgqsxKuSNbT/G2r+ha/6x+aJm7kvjT+sxa4jUROw/KOPm5xzGj33sk1+Librg6NwH/wJ6LCDX33UZg==}
+    dependencies:
+      '@types/webxr': 0.5.0
+    dev: false
+
+  /@types/webxr/0.5.0:
+    resolution: {integrity: sha512-IUMDPSXnYIbEO2IereEFcgcqfDREOgmbGqtrMpVPpACTU6pltYLwHgVkrnYv0XhWEcjio9sYEfIEzgn3c7nDqA==}
+    dev: false
 
   /abort-controller/3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
