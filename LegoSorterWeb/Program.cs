@@ -1,6 +1,7 @@
 using LegoSorterWeb.Data;
 using LegoSorterWeb.Hubs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,17 @@ var app = builder.Build();
 
 //app.UseCors("ClientPermission");
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
+
+// Set up custom content types - associating file extension to MIME type
+var provider = new FileExtensionContentTypeProvider();
+// Add new mappings
+provider.Mappings[".dat"] = "text/plain";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
 
 app.UseAuthorization();
 

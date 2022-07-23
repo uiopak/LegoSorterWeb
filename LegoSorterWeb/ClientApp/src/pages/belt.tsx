@@ -7,6 +7,26 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { ParametricGeometry } from 'three/examples/jsm/geometries/ParametricGeometry';
 import { ParametricGeometries } from 'three/examples/jsm/geometries/ParametricGeometries';
+import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader';
+
+//const lego1 = new URL('../../parts/3001.dat', import.meta.url).href
+//const lego2 = new URL('../../parts/s/3001s01.dat', import.meta.url).href
+
+//function getLegoPartsUrl(name) {
+//    return new URL(`../../parts/${name}.dat`, import.meta.url).href
+//}
+
+//function getLegoPartsSUrl(name) {
+//    return new URL(`../../parts/s/${name}.dat`, import.meta.url).href
+//}
+
+//function getLegoPUrl(name) {
+//    return new URL(`../../p/${name}.dat`, import.meta.url).href
+//}
+
+//import lego1 from '../parts/3001.dat'
+//import lego2 from '../parts/s/3001.dat'
+
 
 
 //function getQuery(getQuery: any, fetchData: (source: any, { value, refetching }: { value: any; refetching: any; }) => Promise<void>): [any, { mutate: any; refetch: any; }] {
@@ -152,7 +172,78 @@ const torus2 = new THREE.Mesh(geometry2, material2);
 torus2.position.set(-17,2.5,2)
 scene.add(torus2);
 
+// Lego
 
+// Instantiate a loader
+const loader = new LDrawLoader();
+let lego:THREE.Group;
+loader.load(
+    // resource URL
+    "/parts/parts/3001.dat",
+    //getLegoPartsUrl(3001),
+    // called when the resource is loaded
+    function (group) {
+
+        // Optionally, use LDrawUtils.mergeObject() from
+        // 'examples/jsm/utils/LDrawUtils.js' to merge all
+        // geometries by material (it gives better runtime
+        // performance, but construction steps are lost)
+        // group = LDrawUtils.mergeObject( group );
+        group.rotateX(Math.PI);
+        group.scale.set(0.025, 0.025, 0.025);
+        console.log(group);
+        
+        const bbox = new THREE.Box3().setFromObject(group);
+        let helper = new THREE.Box3Helper(bbox, new THREE.Color(0, 255, 0));
+        let size = bbox.getSize(new THREE.Vector3()); // HEREyou get the size
+        console.log(size);
+        scene.add(helper);
+        let pos = group.getWorldPosition(new THREE.Vector3());
+        console.log(pos);
+        let pos2 = group.position;
+        console.log(pos2);
+
+        const low = bbox.min;
+        const high = bbox.max;
+
+        const corner1 = new THREE.Vector3(low.x, low.y, low.z);
+        console.log(corner1);
+        const corner2 = new THREE.Vector3(high.x, low.y, low.z);
+        console.log(corner2);
+        const corner3 = new THREE.Vector3(low.x, high.y, low.z);
+        console.log(corner3);
+        const corner4 = new THREE.Vector3(low.x, low.y, high.z);
+        console.log(corner4);
+
+        const corner5 = new THREE.Vector3(high.x, high.y, low.z);
+        console.log(corner5);
+        const corner6 = new THREE.Vector3(high.x, low.y, high.z);
+        console.log(corner6);
+        const corner7 = new THREE.Vector3(low.x, high.y, high.z);
+        console.log(corner7);
+        const corner8 = new THREE.Vector3(high.x, high.y, high.z);
+        console.log(corner8);
+        group.position.y -= low.y;
+        group.position.y += 2;
+        group.position.x = -17;
+        //group.position.y += 0.05;
+        scene.add(group);
+        lego = group;
+
+    },
+    // called while loading is progressing
+    function (xhr) {
+
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+
+    },
+    // called when loading has errors
+    function (error) {
+
+        console.log('An error happened');
+
+    }
+);
 
 // Belt
 const path = new THREE.Path();
@@ -258,7 +349,7 @@ scene.add(pointLight2);
 const lightHelper2 = new THREE.PointLightHelper(pointLight2)
 scene.add(lightHelper2)
 
-const ambientLight = new THREE.AmbientLight(0xffffff,0.0);
+const ambientLight = new THREE.AmbientLight(0xffffff,0.3);
 scene.add(ambientLight);
 
 // Helpers
@@ -280,9 +371,13 @@ function animate() {
     //torus.rotation.y += 0.005;
     //torus.rotation.z += 0.01;
     let off = clock.getElapsedTime()
-    torus2.position.x += (off - last) * (path.getLength()/10);//liczba segmentów wartoœæ 1 to przesuniecie o jeden segment dlatego wyliczamy o ile siê zmieni³o
+    torus2.position.x += (off - last) * (path.getLength() / 10);//liczba segmentów wartoœæ 1 to przesuniecie o jeden segment dlatego wyliczamy o ile siê zmieni³o
+    if(lego != undefined)
+        lego.position.x += (off - last) * (path.getLength() / 10);
     if (torus2.position.x > 17) {
         torus2.position.x = -17;
+        if (lego != undefined)
+            lego.position.x = -17;
     }
     last = off;
     //console.log(off);
