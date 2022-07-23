@@ -47,6 +47,7 @@ namespace LegoSorterWeb.Controllers
             {
                 return NotFound();
             }
+            if(configuration.Value!=null)
             Console.WriteLine(configuration.Value.ToString());
             return $"\"{configuration.Value}\"";
         }

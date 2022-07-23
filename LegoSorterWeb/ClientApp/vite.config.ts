@@ -29,7 +29,7 @@ export default defineConfig({
     ],
   build: {
     target: 'esnext',
-    polyfillDynamicImport: false,
+    //polyfillDynamicImport: false,
   },
   server: {
     port: 5002,
