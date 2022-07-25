@@ -12,8 +12,11 @@ import GUI from 'lil-gui';
 
 import * as signalR from "@microsoft/signalr";
 
+import map_ldraw_raw from '../assets/map_ldraw.json?raw';
+
 
 export default function Belt() {
+    const map_ldraw = JSON.parse(map_ldraw_raw);
     const fetchData = async () =>
         await fetch(`/api/Sorter/`);
 
@@ -24,9 +27,14 @@ export default function Belt() {
         console.log(data())
     }
 
-    type MessageItem = { title: string; };
+    type MessageItem = { ymin: number, xmin: number, ymax: number, xmax: number, label: string, score: number };
 
-    const [message, setMessage] = createSignal("");
+    const [message_ymin, setMessage_ymin] = createSignal(0);
+    const [message_xmin, setMessage_xmin] = createSignal(0);
+    const [message_ymax, setMessage_ymax] = createSignal(0);
+    const [message_xmax, setMessage_xmax] = createSignal(0);
+    const [message_label, setMessage_label] = createSignal("");
+    const [message_score, setMessage_score] = createSignal(0.0);
 
     //function createLocalStore<T extends object>(
     //    name: string,
@@ -40,7 +48,7 @@ export default function Belt() {
     //    return [state, setState];
     //}
 
-    type LegoItemMessage = { partNo: string, x: number, y: number, z: number, width: number, heigth: number };
+    type LegoItemMessage = { partNo: string, x: number, y: number, z: number};
     type LegoModelItem = { model: THREE.Group, refMes: LegoItemMessage };
 
     const [legoItemMessages, setLegoItemMessages] = createStore<LegoItemMessage[]>([]);
@@ -49,7 +57,7 @@ export default function Belt() {
 
     const [messages, setMessages] = createStore<MessageItem[]>([]);
 
-    const username = new Date().getTime();
+    //const username = new Date().getTime();
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl('/hubs/sorter')
@@ -60,20 +68,53 @@ export default function Belt() {
         connection.stop().catch((err: string) => console.log(err))
     });
 
-    connection.on("messageReceived", (username: string, message: string) => {
+    connection.on("messageReceived", (new_messages) => {
         console.log("messageReceived")
-        setMessages(messages.length, {
-            title: message
-        });
+        for (var modelItem of legoModels) {
+            scene.remove(modelItem.model);
+            modelItem.model.remove();
+        }
+        setLegoModels([]);
+        for (var message of new_messages) {
+            setMessages(messages.length, {
+                ymin: message.ymin,
+                xmin: message.xmin,
+                ymax: message.ymax,
+                xmax: message.xmax,
+                label: message.label,
+                score: message.core
+            });
+            let x, z;
+            [x, z] = min_max2x_z(message.ymin, message.xmin, message.ymax, message.xmax);
+            createLego({ partNo: message.label, z: z, x: x, y: 0 });
+        }
     });
+
+
+    function min_max2x_z(ymin: number, xmin: number, ymax: number, xmax: number) {
+        let x, z;
+        let median_x = (xmin + xmax) / 2;
+        let median_y = (ymin + ymax) / 2;
+        //TODO values from config, plus camera angle, position and belt width in px
+
+        z = - 10 * (median_x / 1080) + 5 // 10 - width; median_x/1080 - proportion of width; +5 belt edge offest; values reversed - +, becouse view is mirror
+        x = 40 * (median_y / 1920) - 20 // 40 - length; median_y/1920 - proportion of length; -20 belt edge offest;
+
+        return [x, z]
+    }
 
     connection.start().catch((err: string) => console.log(err));
 
     const addMessage = (e: SubmitEvent) => {
         e.preventDefault();
         batch(() => {
-            connection.send("sendMessage", username, message());
-            setMessage("");
+            connection.send("sendMessage", [{ ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }, { ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }]);
+            setMessage_ymin(0);
+            setMessage_xmin(0);
+            setMessage_ymax(0);
+            setMessage_xmax(0);
+            setMessage_label("");
+            setMessage_score(0.0);
         });
     };
 
@@ -110,7 +151,7 @@ export default function Belt() {
         loader.smoothNormals = true;
         loader.load(
             // resource URL
-            `/parts/parts/${legoMessage.partNo}.dat`,
+            `/parts/parts/${map_ldraw[legoMessage.partNo]}.dat`,
 
             // called when the resource is loaded
             function (group) {
@@ -272,9 +313,9 @@ export default function Belt() {
     }
     createGUI();
 
-    createLego({ partNo: "3001", heigth: 0, width: 0, z: 2, x: -17, y: 0 });
-    createLego({ partNo: "3002", heigth: 0, width: 0, z: -2, x: -16, y: 0 });
-    createLego({ partNo: "3003", heigth: 0, width: 0, z: 0, x: -18, y: 0 });
+    createLego({ partNo: "3001", z: 2, x: -17, y: 0 });
+    createLego({ partNo: "3002", z: -2, x: -16, y: 0 });
+    createLego({ partNo: "3003", z: 0, x: -18, y: 0 });
 
 
 
@@ -314,26 +355,29 @@ export default function Belt() {
 
     return (
         <>
-            <section class="bg-base-300 text-base-800 p-8">
+            <section class="overflow-auto bg-base-300 text-base-800 p-4 h-80">
                 <h1 class="text-2xl font-bold">Belt</h1>
 
                 <button class="btn" innerText="start" onClick={() => testTest()} />
-
-            </section>
-            <section class="bg-base-300 text-base-800 p-8">
-
-                <div id="divMessages" class="messages"></div>
+                <h1 class="text-2xl font-bold">Belt log:</h1>
                 <For each={messages}>
                     {(mes, i) => (
-                        <div>{mes.title}</div>
+                        <div>Label: {mes.label} Score:{mes.score} ymin:{mes.ymin} xmin:{mes.xmin} ymax:{mes.ymax} xmax:{mes.xmax}</div>
                     )}
                 </For>
+            </section>
+            <section class="bg-base-300 text-base-800 p-1">
                 <form onSubmit={addMessage}>
-                    <input type="text" value={message()} onInput={(e) => setMessage(e.currentTarget.value)} />
+                    <input type="number" placeholder="ymin" value={message_ymin()} onInput={(e) => setMessage_ymin(Number(e.currentTarget.value))} />
+                    <input type="number" placeholder="xmin" value={message_xmin()} onInput={(e) => setMessage_xmin(Number(e.currentTarget.value))} />
+                    <input type="number" placeholder="ymax" value={message_ymax()} onInput={(e) => setMessage_ymax(Number(e.currentTarget.value))} />
+                    <input type="number" placeholder="xmax" value={message_xmax()} onInput={(e) => setMessage_xmax(Number(e.currentTarget.value))} />
+                    <input type="text" placeholder="label" value={message_label()} onInput={(e) => setMessage_label(e.currentTarget.value)} />
+                    <input type="number" step="any" placeholder="score" value={message_score()} onInput={(e) => setMessage_score(Number(e.currentTarget.value))} />
                     <button >Send</button>
                 </form>
             </section>
-            <section class="bg-base-300 text-base-800 p-8">
+            <section class="bg-base-300 text-base-800 p-4">
                 {renderer.domElement}
             </section>
         </>
