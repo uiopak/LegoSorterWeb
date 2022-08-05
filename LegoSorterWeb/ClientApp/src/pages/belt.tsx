@@ -1,4 +1,4 @@
-import { batch, createEffect, createResource, createSignal, For, onCleanup } from 'solid-js';
+import { batch, createEffect, createResource, createSignal, For, onCleanup, Show } from 'solid-js';
 import { createStore } from "solid-js/store";
 import type { StoreNode, Store, SetStoreFunction } from "solid-js/store";
 
@@ -14,8 +14,22 @@ import * as signalR from "@microsoft/signalr";
 
 import map_ldraw_raw from '../assets/map_ldraw.json?raw';
 
+import { mergeProps } from "solid-js";
 
-export default function Belt() {
+
+
+export default function Belt(props: any) {
+    const defaultProps = mergeProps({ gui: true }, props);
+
+    const [speed, setSpeed] = createSignal(1);
+
+
+    const [displayLines, setDisplayLines] = createSignal(true);
+
+    const [conditionalLines, setConditionalLines] = createSignal(true);
+
+
+
     const map_ldraw = JSON.parse(map_ldraw_raw);
     const fetchData = async () =>
         await fetch(`/api/Sorter/`);
@@ -24,7 +38,20 @@ export default function Belt() {
     const [data, { mutate, refetch }] = createResource(fetchData);
 
     function testTest() {
-        console.log(data())
+        createLego({ partNo: "3001", z: 2, x: -17, y: 0 });
+        createLego({ partNo: "3002", z: -2, x: -16, y: 0 });
+        createLego({ partNo: "3003", z: 0, x: -18, y: 0 });
+    }
+
+    function clearMessages() {
+        setMessages([])
+    }
+    function clearLegoModels() {
+        for (var modelItem of legoModels) {
+            scene.remove(modelItem.model);
+            modelItem.model.remove();
+        }
+        setLegoModels([]);
     }
 
     type MessageItem = { ymin: number, xmin: number, ymax: number, xmax: number, label: string, score: number };
@@ -36,28 +63,16 @@ export default function Belt() {
     const [message_label, setMessage_label] = createSignal("");
     const [message_score, setMessage_score] = createSignal(0.0);
 
-    //function createLocalStore<T extends object>(
-    //    name: string,
-    //    init: T
-    //): [Store<T>, SetStoreFunction<T>] {
-    //    const localState = localStorage.getItem(name);
-    //    const [state, setState] = createStore<T>(
-    //        localState ? JSON.parse(localState) : init
-    //    );
-    //    createEffect(() => localStorage.setItem(name, JSON.stringify(state)));
-    //    return [state, setState];
-    //}
 
     type LegoItemMessage = { partNo: string, x: number, y: number, z: number};
     type LegoModelItem = { model: THREE.Group, refMes: LegoItemMessage };
 
-    const [legoItemMessages, setLegoItemMessages] = createStore<LegoItemMessage[]>([]);
+    //const [legoItemMessages, setLegoItemMessages] = createStore<LegoItemMessage[]>([]);
 
     const [legoModels, setLegoModels] = createStore<LegoModelItem[]>([]);
 
     const [messages, setMessages] = createStore<MessageItem[]>([]);
 
-    //const username = new Date().getTime();
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl('/hubs/sorter')
@@ -70,11 +85,7 @@ export default function Belt() {
 
     connection.on("messageReceived", (new_messages) => {
         console.log("messageReceived")
-        for (var modelItem of legoModels) {
-            scene.remove(modelItem.model);
-            modelItem.model.remove();
-        }
-        setLegoModels([]);
+        clearLegoModels();
         for (var message of new_messages) {
             setMessages(messages.length, {
                 ymin: message.ymin,
@@ -82,7 +93,7 @@ export default function Belt() {
                 ymax: message.ymax,
                 xmax: message.xmax,
                 label: message.label,
-                score: message.core
+                score: message.score
             });
             let x, z;
             [x, z] = min_max2x_z(message.ymin, message.xmin, message.ymax, message.xmax);
@@ -120,13 +131,27 @@ export default function Belt() {
 
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(45, (window.innerWidth * 0.9) / (window.innerHeight * 0.55), 0.1, 1000);
-
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth * 0.9, window.innerHeight * 0.55);
-    camera.position.set(45, 25, 0);
+
+    if (defaultProps.gui) {
+        var camera = new THREE.PerspectiveCamera(40, 480 / 854, 0.1, 1000);
+
+        renderer.setSize(480, 854);
+    }
+    else {
+        var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = (window.innerWidth / window.innerHeight);
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+
+    camera.position.set(22, 24, 0);
     camera.lookAt(0, 0, 0);
     onCleanup(() => renderer.dispose());
 
@@ -273,52 +298,35 @@ export default function Belt() {
 
     //setLegoModels([new LegoModelItem()])
 
-    function updateObjectsVisibility() {
+    createEffect(() => {
         for (var modelItem of legoModels) {
             var model = modelItem.model;
             model.traverse(c => {
-                if (c.isLineSegments) {
-                    if (c.isConditionalLine) {
-                        c.visible = guiData.conditionalLines;
+                if ((c as THREE.LineSegments).isLineSegments) {
+                    if ((c as any).isConditionalLine) {
+                        c.visible = conditionalLines();
                     } else {
-                        c.visible = guiData.displayLines;
+                        c.visible = displayLines();
                     }
                 }
             });
         }
-    }
+    })
 
-
-    let guiData = {
-        displayLines: true,
-        conditionalLines: true,
-    };
-
-
-    let gui: GUI;
-
-    function createGUI() {
-
-        if (gui) {
-
-            gui.destroy();
-
-        }
-
-        gui = new GUI();
-
-        gui.add(guiData, 'displayLines').name('Display Lines').onChange(updateObjectsVisibility);
-        gui.add(guiData, 'conditionalLines').name('Conditional Lines').onChange(updateObjectsVisibility);
-
-    }
-    createGUI();
-
-    createLego({ partNo: "3001", z: 2, x: -17, y: 0 });
-    createLego({ partNo: "3002", z: -2, x: -16, y: 0 });
-    createLego({ partNo: "3003", z: 0, x: -18, y: 0 });
-
-
-
+    //function updateObjectsVisibility() {
+    //    for (var modelItem of legoModels) {
+    //        var model = modelItem.model;
+    //        model.traverse(c => {
+    //            if (c.isLineSegments) {
+    //                if (c.isConditionalLine) {
+    //                    c.visible = guiData.conditionalLines;
+    //                } else {
+    //                    c.visible = guiData.displayLines;
+    //                }
+    //            }
+    //        });
+    //    }
+    //}
 
     // Animation Loop
     let clock = new THREE.Clock();
@@ -332,7 +340,7 @@ export default function Belt() {
         for (var modelItem of legoModels) {
             var lego = modelItem.model;
             if (lego != undefined) {
-                lego.position.x += (off - last) * (path.getLength() / 10);
+                lego.position.x += ((off - last) * (path.getLength() / 10))*speed();
                 if (lego.position.x > 17) {
                     lego.position.x = modelItem.refMes.x;
                 }
@@ -340,13 +348,11 @@ export default function Belt() {
             }
         }
 
-
-        last = off;
-
-
         controls.update();
         if (m.map != null)
-            m.map.offset.x = off
+            m.map.offset.x += (off - last) * speed()
+
+        last = off;
 
         renderer.render(scene, camera);
     }
@@ -355,31 +361,56 @@ export default function Belt() {
 
     return (
         <>
-            <section class="overflow-auto bg-base-300 text-base-800 p-4 h-80">
-                <h1 class="text-2xl font-bold">Belt</h1>
+            <Show
+                when={defaultProps.gui}
+                fallback={
+                    <>
+                    {renderer.domElement}
+                    </>
+                }
+            >
+                <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
+                    <h1 class="text-2xl font-bold p-4">Belt Web Config</h1>
+                    <button class="btn" innerText="Test" onClick={() => testTest()} />
+                    <div class="form-control p-4">
+                        <label class="input-group cursor-pointer">
+                            <span class="label-text">Conditional Lines</span>
+                            <input type="checkbox" class="toggle toggle-primary" checked onChange={(e) => setConditionalLines(e.currentTarget.checked)}/>
+                        </label>
+                    </div>
+                    <div class="form-control p-4">
+                        <label class="input-group cursor-pointer">
+                            <span class="label-text">Display Lines</span>
+                            <input type="checkbox" class="toggle toggle-primary" checked onChange={(e) => setDisplayLines(e.currentTarget.checked)} />
+                        </label>
+                    </div>
+                    <div class="form-control p-4">
+                        <label class="input-group cursor-pointer">
+                            <span class="label-text">Speed:</span>
 
-                <button class="btn" innerText="start" onClick={() => testTest()} />
-                <h1 class="text-2xl font-bold">Belt log:</h1>
-                <For each={messages}>
-                    {(mes, i) => (
-                        <div>Label: {mes.label} Score:{mes.score} ymin:{mes.ymin} xmin:{mes.xmin} ymax:{mes.ymax} xmax:{mes.xmax}</div>
-                    )}
-                </For>
-            </section>
-            <section class="bg-base-300 text-base-800 p-1">
-                <form onSubmit={addMessage}>
-                    <input type="number" placeholder="ymin" value={message_ymin()} onInput={(e) => setMessage_ymin(Number(e.currentTarget.value))} />
-                    <input type="number" placeholder="xmin" value={message_xmin()} onInput={(e) => setMessage_xmin(Number(e.currentTarget.value))} />
-                    <input type="number" placeholder="ymax" value={message_ymax()} onInput={(e) => setMessage_ymax(Number(e.currentTarget.value))} />
-                    <input type="number" placeholder="xmax" value={message_xmax()} onInput={(e) => setMessage_xmax(Number(e.currentTarget.value))} />
-                    <input type="text" placeholder="label" value={message_label()} onInput={(e) => setMessage_label(e.currentTarget.value)} />
-                    <input type="number" step="any" placeholder="score" value={message_score()} onInput={(e) => setMessage_score(Number(e.currentTarget.value))} />
-                    <button >Send</button>
-                </form>
-            </section>
-            <section class="bg-base-300 text-base-800 p-4">
-                {renderer.domElement}
-            </section>
+                            <input type="range" min="0" max="10" step="0.1" value={speed()} class="range range-primary" onInput={(e) => setSpeed(parseFloat(e.currentTarget.value))} onChange={(e) => setSpeed(parseFloat(e.currentTarget.value))} />
+                            <span class="label-text">{speed}</span>
+                        </label>
+                    </div>
+                </section>
+                <div class="flex flex-wrap">
+                    <section class="overflow-auto bg-base-300 text-base-800 p-4 h-[854px] min-w-[520px]">
+
+                        <button class="btn" innerText="start" onClick={() => testTest()} />
+                        <button class="btn" innerText="Clear Messages" onClick={() => clearMessages()} />
+                        <button class="btn" innerText="Clear Lego" onClick={() => clearLegoModels()} />
+                        <h1 class="text-2xl font-bold">Belt log:</h1>
+                        <For each={messages}>
+                            {(mes, i) => (
+                                <div>Label: {mes.label} Score:{mes.score} ymin:{mes.ymin} xmin:{mes.xmin} ymax:{mes.ymax} xmax:{mes.xmax}</div>
+                            )}
+                        </For>
+                    </section>
+                    <section class="bg-base-300 text-base-800 p-4">
+                        {renderer.domElement}
+                    </section>
+                    </div>
+            </Show>
         </>
     );
 }

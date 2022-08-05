@@ -6,28 +6,66 @@ import Belt from './pages/belt';
 //import Config from './pages/config';
 import AboutData from './pages/about.data';
 import ConfigData from './pages/config.data';
+import PageWrapper from './pages/pageWrapper';
+import RawBelt from './components/rawBelt';
+
 
 export const routes: RouteDefinition[] = [
     {
         path: '/',
-        component: Home,
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: Home,
+            }
+        ]
     }, {
         path: '/belt',
-        component: Belt,
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: Belt,
+            }
+        ]
+    }, {
+        path: '/rawbelt',
+        component: RawBelt,
     },
+
     {
         path: '/about',
-        component: lazy(() => import('./pages/about')),
-        data: AboutData,
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: lazy(() => import('./pages/about')),
+                data: AboutData,
+            }
+        ]
     },
     {
         path: '/config',
-        /*    component: Config,*/
-        component: lazy(() => import('./pages/config')),
-        data: ConfigData,
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: lazy(() => import('./pages/config')),
+                data: ConfigData,
+            }
+        ]
+        
     },
     {
         path: '**',
-        component: lazy(() => import('./errors/404')),
+        component: PageWrapper,
+        children: [
+            {
+                path: '**',
+                component: lazy(() => import('./errors/404')),
+            }
+        ]
+        
     },
 ];
