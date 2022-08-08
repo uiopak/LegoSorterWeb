@@ -1,4 +1,4 @@
-import { batch, createEffect, createResource, createSignal, For, onCleanup, Show } from 'solid-js';
+import { batch, createEffect, createResource, createSignal, For, Match, onCleanup, Show, Switch } from 'solid-js';
 import { createStore } from "solid-js/store";
 import type { StoreNode, Store, SetStoreFunction } from "solid-js/store";
 
@@ -43,6 +43,33 @@ export default function Belt(props: any) {
         createLego({ partNo: "3003", z: 0, x: -18, y: 0 });
     }
 
+    function sendAction(action: string) {
+        connectionControl.send("action", action)
+    }
+
+    function startStopAnalyze() {
+        sendAction("analyzeFast")
+    }
+
+
+    function sendNavigation(navigation: string) {
+        connectionControl.send("navigation", navigation)
+    }
+
+    function navigateFastAnalyze() {
+        sendNavigation("analyzeFast")
+    }
+    function navigateAnalyze() {
+        sendNavigation("analyze")
+    }
+    function navigateSort() {
+        sendNavigation("sort")
+    }
+    function navigateBack() {
+        sendNavigation("back")
+    }
+
+
     function clearMessages() {
         setMessages([])
     }
@@ -64,7 +91,7 @@ export default function Belt(props: any) {
     const [message_score, setMessage_score] = createSignal(0.0);
 
 
-    type LegoItemMessage = { partNo: string, x: number, y: number, z: number};
+    type LegoItemMessage = { partNo: string, x: number, y: number, z: number };
     type LegoModelItem = { model: THREE.Group, refMes: LegoItemMessage };
 
     //const [legoItemMessages, setLegoItemMessages] = createStore<LegoItemMessage[]>([]);
@@ -78,9 +105,14 @@ export default function Belt(props: any) {
         .withUrl('/hubs/sorter')
         .build();
 
+    const connectionControl = new signalR.HubConnectionBuilder()
+        .withUrl('/hubs/control')
+        .build();
+
     onCleanup(() => {
         console.log("cleanup");
         connection.stop().catch((err: string) => console.log(err))
+        connectionControl.stop().catch((err: string) => console.log(err))
     });
 
     connection.on("messageReceived", (new_messages) => {
@@ -115,6 +147,7 @@ export default function Belt(props: any) {
     }
 
     connection.start().catch((err: string) => console.log(err));
+    connectionControl.start().catch((err: string) => console.log(err));
 
     const addMessage = (e: SubmitEvent) => {
         e.preventDefault();
@@ -340,7 +373,7 @@ export default function Belt(props: any) {
         for (var modelItem of legoModels) {
             var lego = modelItem.model;
             if (lego != undefined) {
-                lego.position.x += ((off - last) * (path.getLength() / 10))*speed();
+                lego.position.x += ((off - last) * (path.getLength() / 10)) * speed();
                 if (lego.position.x > 17) {
                     lego.position.x = modelItem.refMes.x;
                 }
@@ -365,17 +398,29 @@ export default function Belt(props: any) {
                 when={defaultProps.gui}
                 fallback={
                     <>
-                    {renderer.domElement}
+                        {renderer.domElement}
                     </>
                 }
             >
+                <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
+                    <h2 class="text-2xl font-bold p-4">Start/Stop Analyze</h2>
+                    <button class="btn" innerText="Start/Stop Analyze" onClick={() => startStopAnalyze()} />
+                    <h2 class="text-2xl font-bold p-4">Navigate Fast Analyze</h2>
+                    <button class="btn" innerText="Navigate Fast Analyze" onClick={() => navigateFastAnalyze()} />
+                </section>
+                <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
+                    <h2 class="text-2xl font-bold p-4">Sorter Server: connected</h2>
+                    <button class="btn" innerText="Refresh" onClick={() => testTest()} />
+                    <h2 class="text-2xl font-bold p-4">Sorter App: connected</h2>
+                    <button class="btn" innerText="Refresh" onClick={() => testTest()} />
+                </section>
                 <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
                     <h1 class="text-2xl font-bold p-4">Belt Web Config</h1>
                     <button class="btn" innerText="Test" onClick={() => testTest()} />
                     <div class="form-control p-4">
                         <label class="input-group cursor-pointer">
                             <span class="label-text">Conditional Lines</span>
-                            <input type="checkbox" class="toggle toggle-primary" checked onChange={(e) => setConditionalLines(e.currentTarget.checked)}/>
+                            <input type="checkbox" class="toggle toggle-primary" checked onChange={(e) => setConditionalLines(e.currentTarget.checked)} />
                         </label>
                     </div>
                     <div class="form-control p-4">
@@ -407,9 +452,32 @@ export default function Belt(props: any) {
                         </For>
                     </section>
                     <section class="bg-base-300 text-base-800 p-4">
-                        {renderer.domElement}
+                        <div class="mockup-phone">
+                            <div class="camera"></div>
+                            <div class="display">
+                                {renderer.domElement}
+                            </div>
+                        </div>
                     </section>
-                    </div>
+                    <section class="bg-base-300 text-base-800 p-4">
+                    <div class="mockup-phone">
+                        <div class="camera"></div>
+                        <div class="display">
+                                <div class="artboard artboard-demo phone-5 gap-4 mt-[-21px] mb-[-21px]">
+                                <Switch>
+                                    <Match when={true}>
+                                            <button class="btn w-96" onClick={() => navigateBack()}>Back</button>
+                                            <button class="btn w-96" onClick={() => navigateAnalyze()}>Analyze</button>
+                                            <button class="btn w-96" onClick={() => navigateSort()}>Sort</button>
+                                            <button class="btn w-96" onClick={() => navigateFastAnalyze()}>Fast Analyze</button>
+                                    </Match>
+                                </Switch>
+                            </div>
+
+                        </div>
+                        </div>
+                    </section>
+                </div>
             </Show>
         </>
     );

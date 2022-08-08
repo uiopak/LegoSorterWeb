@@ -28,7 +28,7 @@
     "lil-gui": "^0.17.0",
     "solid-app-router": "^0.4.1",
     "solid-js": "^1.4.7",
-    "theme-change": "^2.1.0",
+    "theme-change": "^2.2.0",
     "three": "^0.142.0"
   }
 }

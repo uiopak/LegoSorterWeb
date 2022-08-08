@@ -48,6 +48,7 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.MapHub<SorterHub>("/hubs/sorter");
+app.MapHub<ControlHub>("/hubs/control");
 
 app.Run();
 

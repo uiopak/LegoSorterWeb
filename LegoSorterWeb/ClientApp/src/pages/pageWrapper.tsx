@@ -23,6 +23,11 @@ export default function PageWrapper() {
                     </a>
                 </div>
                 <div class="flex-none">
+                    <a class="btn btn-ghost normal-case text-xl" href="/control">
+                        Control
+                    </a>
+                </div>
+                <div class="flex-none">
                     <a class="btn btn-ghost normal-case text-xl" href="/about">
                         About
                     </a>

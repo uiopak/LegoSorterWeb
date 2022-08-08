@@ -8,6 +8,7 @@ import AboutData from './pages/about.data';
 import ConfigData from './pages/config.data';
 import PageWrapper from './pages/pageWrapper';
 import RawBelt from './components/rawBelt';
+import Control from './pages/control';
 
 
 export const routes: RouteDefinition[] = [
@@ -56,8 +57,16 @@ export const routes: RouteDefinition[] = [
             }
         ]
         
-    },
-    {
+    }, {
+        path: '/control',
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: Control,
+            }
+        ]
+    }, {
         path: '**',
         component: PageWrapper,
         children: [
