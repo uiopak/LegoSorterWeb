@@ -1,0 +1,11 @@
+﻿.mockup-phone .camera {
+    width: 0
+}
+
+.mockup-phone .camera:before {
+    display: none
+}
+
+.mockup-phone .camera:after {
+    display: none
+}

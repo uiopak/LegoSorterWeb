@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -14,6 +14,12 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.21.4" />
+    <PackageReference Include="Grpc" Version="2.46.3" />
+    <PackageReference Include="Grpc.Tools" Version="2.47.0" PrivateAssets="All">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
       <PrivateAssets>all</PrivateAssets>
@@ -28,6 +34,16 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.7" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Protobuf Include="**\*.proto" GrpcServices="Client" OutputDir="generated" />
+    <!--<Protobuf Include="proto\LegoAnalysis2.proto"/>
+    <Protobuf Include="proto\LegoAnalysisFast2.proto"/>
+    <Protobuf Include="proto\LegoCapture2.proto"/>
+    <Protobuf Include="proto\LegoControl2.proto"/>
+    <Protobuf Include="proto\LegoSorter2.proto"/>
+    <Protobuf Include="proto\Messages2.proto"/>-->
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -37,9 +53,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="proto\LegoAnalysis.proto" />
+    <None Remove="proto\LegoAnalysisFast.proto" />
+    <None Remove="proto\LegoCapture.proto" />
+    <None Remove="proto\LegoControl.proto" />
+    <None Remove="proto\LegoSorter.proto" />
+    <None Remove="proto\Messages.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Database\LegoSorterWebDB.sqlite3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Update="proto\Messages.proto" GrpcServices="None" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

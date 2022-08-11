@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option csharp_namespace = "LegoSorterWeb.proto";
+
+import "proto/Messages.proto";
+
+package sorter;
+
+option java_package = "com.lsorter.sorter";
+option java_outer_classname = "LegoSorterProto";
+
+message BoundingBoxWithIndex {
+  int32 index = 1;
+  common.BoundingBox bb = 2;
+}
+
+message ListOfBoundingBoxesWithIndexes {
+  repeated BoundingBoxWithIndex packet = 1;
+}
+
+message SorterConfiguration {
+  int32 speed = 1;
+}
+
+service LegoSorter {
+  rpc processNextImage(common.ImageRequest) returns (ListOfBoundingBoxesWithIndexes);
+  rpc getConfiguration(common.Empty) returns (SorterConfiguration);
+  rpc updateConfiguration(SorterConfiguration) returns (common.Empty);
+  rpc startMachine(common.Empty) returns (common.Empty);
+  rpc stopMachine(common.Empty) returns (common.Empty);
+}

@@ -16,23 +16,86 @@ import map_ldraw_raw from '../assets/map_ldraw.json?raw';
 
 import { mergeProps } from "solid-js";
 
+import "./camera.css"
+import { Configs, useConection } from '../contexts/connectionContext';
+
 
 
 export default function Belt(props: any) {
+    const [connection, connectionControl,
+        { capture_mode_preference, setCapture_mode_preference },
+        { capture_resolution_value, setCapture_resolution_value },
+        { analysis_resolution_value, setAnalysis_resolution_value },
+        { exposure_compensation_value, setExposure_compensation_value },
+        { manual_settings, setManual_settings },
+        { sensor_exposure_time, setSensor_exposure_time },
+        { sensor_sensitivity, setSensor_sensitivity },
+        { sorter_conveyor_speed_value, setSorter_conveyor_speed_value },
+        { sorter_mode_preference, setSorter_mode_preference },
+        { run_conveyor_time_value, setRun_conveyor_time_value },
+        { cameraCompensationRangeMin, setCameraCompensationRangeMin },
+        { cameraCompensationRangeMax, setCameraCompensationRangeMax },
+        { exposureTimeRangeMin, setExposureTimeRangeMin },
+        { exposureTimeRangeMax, setExposureTimeRangeMax },
+        { sensitivityRangeMin, setSensitivityRangeMin },
+        { sensitivityRangeMax, setSensitivityRangeMax },
+        { savedAddr, setSavedAddr },
+        { savedWebAddr, setSavedWebAddr },
+        { conected, disconected }] = useConection();
+
     const defaultProps = mergeProps({ gui: true }, props);
 
-    const [speed, setSpeed] = createSignal(1);
+    const localSpeed = localStorage.getItem("speed")||"1";
+    const [speed, setSpeed] = createSignal(parseFloat(localSpeed));
+    createEffect(() => localStorage.setItem("speed", JSON.stringify(speed())))
 
+    const localDisplayLines = localStorage.getItem("displayLines") || "true";
+    const [displayLines, setDisplayLines] = createSignal(JSON.parse(localDisplayLines));
+    createEffect(() => localStorage.setItem("displayLines", JSON.stringify(displayLines())))
 
-    const [displayLines, setDisplayLines] = createSignal(true);
+    const localConditionalLines = localStorage.getItem("conditionalLines") || "true";
+    const [conditionalLines, setConditionalLines] = createSignal(JSON.parse(localConditionalLines));
+    createEffect(() => localStorage.setItem("conditionalLines", JSON.stringify(conditionalLines())))
+        
+    const local_camera_preview_time = localStorage.getItem("camera_preview_time") || "500";
+    const [camera_preview_time, setCamera_preview_time] = createSignal(parseInt(local_camera_preview_time));
+    createEffect(() => localStorage.setItem("camera_preview_time", JSON.stringify(camera_preview_time())))
 
-    const [conditionalLines, setConditionalLines] = createSignal(true);
+    const [image, setImage] = createSignal("");
 
-
+    const [displaySwitch, setDisplaySwitch] = createSignal("nav");
+    const [navigationSwitch, setNavigationSwitch] = createSignal("nav");
 
     const map_ldraw = JSON.parse(map_ldraw_raw);
     const fetchData = async () =>
         await fetch(`/api/Sorter/`);
+
+    async function getPrev() {
+        refetch();
+        var response = data()
+        if (response != undefined) {
+            const responseBlob = await response.blob()
+            setImage(URL.createObjectURL(responseBlob))
+            var t = 12
+        }
+        //var res = await fetch(`/api/Sorter/`);
+    }
+
+    const [startStopTimerPreviewText, setStartStopTimerPreviewText] = createSignal("Start timer");
+    var timerInterval: any = undefined
+
+    function startStopTimerPreview() {
+        if (timerInterval == undefined) {
+            timerInterval = setInterval(() => { getPrev() }, camera_preview_time());
+            setStartStopTimerPreviewText("Stop timer")
+        }
+        else {
+            setStartStopTimerPreviewText("Start timer")
+            clearInterval(timerInterval)
+            timerInterval = undefined
+        }
+    }
+
 
 
     const [data, { mutate, refetch }] = createResource(fetchData);
@@ -58,17 +121,130 @@ export default function Belt(props: any) {
 
     function navigateFastAnalyze() {
         sendNavigation("analyzeFast")
+        setNavigationSwitch("analyzeFast")
     }
     function navigateAnalyze() {
         sendNavigation("analyze")
+        setNavigationSwitch("analyze")
     }
     function navigateSort() {
         sendNavigation("sort")
+        setNavigationSwitch("sort")
     }
     function navigateBack() {
         sendNavigation("back")
+        if (navigationSwitch() != "nav") {
+            setNavigationSwitch("nav")
+        }
     }
 
+    const connectionSorter = new signalR.HubConnectionBuilder()
+        .withUrl('/hubs/sorter')
+        .build();
+
+    //camera config start
+
+    //const connectionControl = new signalR.HubConnectionBuilder()
+    //    .withUrl('/hubs/control')
+    //    .build();
+
+    //const [manual_settings, setManual_settings] = createSignal(false);
+    //const [sensor_exposure_time, setSensor_exposure_time] = createSignal("");
+    const frequency = () => {
+        if (sensor_exposure_time() != "") {
+            var val = parseFloat(sensor_exposure_time())
+            return val != 0 ? (1000 / val).toString() : "NaN"
+        }
+        else {
+            return "NaN"
+        }
+    }
+    //const [sensor_sensitivity, setSensor_sensitivity] = createSignal("");
+
+    //const [exposureTimeRangeMin, setExposureTimeRangeMin] = createSignal(0.0);
+    //const [exposureTimeRangeMax, setExposureTimeRangeMax] = createSignal(0.0);
+    //const [sensitivityRangeMin, setSensitivityRangeMin] = createSignal(0);
+    //const [sensitivityRangeMax, setSensitivityRangeMax] = createSignal(0);
+
+    //type Configs = {
+    //    capture_mode_preference: string,
+    //    capture_resolution_value: string,
+    //    analysis_resolution_value: string,
+    //    exposure_compensation_value: string,
+    //    manual_settings: boolean,
+    //    sensor_exposure_time: string,
+    //    sensor_sensitivity: string,
+    //    sorter_conveyor_speed_value: number,
+    //    sorter_mode_preference: string,
+    //    run_conveyor_time_value: string,
+    //};
+
+    //connectionControl.on("sendConfigs", conf => {
+    //    var config2 = conf as Configs
+    //    setCapture_mode_preference(config2.capture_mode_preference)
+    //    setCapture_resolution_value(config2.capture_resolution_value)
+    //    setAnalysis_resolution_value(config2.analysis_resolution_value)
+    //    setExposure_compensation_value(config2.exposure_compensation_value)
+    //    setManual_settings(config2.manual_settings)
+    //    setSensor_exposure_time(config2.sensor_exposure_time)
+    //    setSensor_sensitivity(config2.sensor_sensitivity)
+    //    setSorter_conveyor_speed_value(config2.sorter_conveyor_speed_value)
+    //    setSorter_mode_preference(config2.sorter_mode_preference)
+    //    setRun_conveyor_time_value(config2.run_conveyor_time_value)
+    //})
+
+    //connectionControl.on("sendConfigsConstraints", conf => {
+    //    var configsConstraints2 = conf as ConfigsConstraints
+    //    setExposureTimeRangeMin(configsConstraints2.exposureTimeRangeMin)
+    //    setExposureTimeRangeMax(configsConstraints2.exposureTimeRangeMax)
+    //    setSensitivityRangeMin(configsConstraints2.sensitivityRangeMin)
+    //    setSensitivityRangeMax(configsConstraints2.sensitivityRangeMax)
+    //    //setConfigsConstraints(configsConstraints2)
+    //})
+
+    function getConfig() {
+        connectionControl.send("getConfigs")
+    }
+    function getConfigsConstraints() {
+        connectionControl.send("getConfigsConstraints")
+    }
+    function getConfigAndConstraints() {
+        getConfig()
+        getConfigsConstraints()
+    }
+
+    //const [capture_mode_preference, setCapture_mode_preference] = createSignal("0");
+    //const [capture_resolution_value, setCapture_resolution_value] = createSignal("0");
+    //const [analysis_resolution_value, setAnalysis_resolution_value] = createSignal("0");
+    //const [exposure_compensation_value, setExposure_compensation_value] = createSignal("0");
+
+    //const [sorter_conveyor_speed_value, setSorter_conveyor_speed_value] = createSignal(50);
+    //const [sorter_mode_preference, setSorter_mode_preference] = createSignal("0");
+    //const [run_conveyor_time_value, setRun_conveyor_time_value] = createSignal("500");
+
+    function setConfig() {
+        var conf: Configs = {
+            capture_mode_preference: capture_mode_preference(),
+            capture_resolution_value: capture_resolution_value(),
+            analysis_resolution_value: analysis_resolution_value(),
+            exposure_compensation_value: exposure_compensation_value(),
+            manual_settings: manual_settings(),
+            sensor_exposure_time: sensor_exposure_time(),
+            sensor_sensitivity: sensor_sensitivity(),
+            sorter_conveyor_speed_value: sorter_conveyor_speed_value(),
+            sorter_mode_preference: sorter_mode_preference(),
+            run_conveyor_time_value: run_conveyor_time_value()
+        }
+        connectionControl.send("setConfigs", conf)
+    }
+
+    //camera config end
+
+
+    onCleanup(() => {
+        console.log("cleanup");
+        connectionSorter.stop().catch((err: string) => console.log(err))
+    });
 
     function clearMessages() {
         setMessages([])
@@ -83,12 +259,12 @@ export default function Belt(props: any) {
 
     type MessageItem = { ymin: number, xmin: number, ymax: number, xmax: number, label: string, score: number };
 
-    const [message_ymin, setMessage_ymin] = createSignal(0);
-    const [message_xmin, setMessage_xmin] = createSignal(0);
-    const [message_ymax, setMessage_ymax] = createSignal(0);
-    const [message_xmax, setMessage_xmax] = createSignal(0);
-    const [message_label, setMessage_label] = createSignal("");
-    const [message_score, setMessage_score] = createSignal(0.0);
+    //const [message_ymin, setMessage_ymin] = createSignal(0);
+    //const [message_xmin, setMessage_xmin] = createSignal(0);
+    //const [message_ymax, setMessage_ymax] = createSignal(0);
+    //const [message_xmax, setMessage_xmax] = createSignal(0);
+    //const [message_label, setMessage_label] = createSignal("");
+    //const [message_score, setMessage_score] = createSignal(0.0);
 
 
     type LegoItemMessage = { partNo: string, x: number, y: number, z: number };
@@ -101,24 +277,13 @@ export default function Belt(props: any) {
     const [messages, setMessages] = createStore<MessageItem[]>([]);
 
 
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl('/hubs/sorter')
-        .build();
-
-    const connectionControl = new signalR.HubConnectionBuilder()
-        .withUrl('/hubs/control')
-        .build();
-
-    onCleanup(() => {
-        console.log("cleanup");
-        connection.stop().catch((err: string) => console.log(err))
-        connectionControl.stop().catch((err: string) => console.log(err))
-    });
-
-    connection.on("messageReceived", (new_messages) => {
+    connectionSorter.on("messageReceived", (new_messages) => {
         console.log("messageReceived")
         clearLegoModels();
         for (var message of new_messages) {
+            if (messages.length > 10) {
+                setMessages((m) => { m.shift(); return m; })
+            }
             setMessages(messages.length, {
                 ymin: message.ymin,
                 xmin: message.xmin,
@@ -146,21 +311,20 @@ export default function Belt(props: any) {
         return [x, z]
     }
 
-    connection.start().catch((err: string) => console.log(err));
-    connectionControl.start().catch((err: string) => console.log(err));
+    connectionSorter.start().catch((err: string) => console.log(err));
 
-    const addMessage = (e: SubmitEvent) => {
-        e.preventDefault();
-        batch(() => {
-            connection.send("sendMessage", [{ ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }, { ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }]);
-            setMessage_ymin(0);
-            setMessage_xmin(0);
-            setMessage_ymax(0);
-            setMessage_xmax(0);
-            setMessage_label("");
-            setMessage_score(0.0);
-        });
-    };
+    //const addMessage = (e: SubmitEvent) => {
+    //    e.preventDefault();
+    //    batch(() => {
+    //        connection.send("sendMessage", [{ ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }, { ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }]);
+    //        setMessage_ymin(0);
+    //        setMessage_xmin(0);
+    //        setMessage_ymax(0);
+    //        setMessage_xmax(0);
+    //        setMessage_label("");
+    //        setMessage_score(0.0);
+    //    });
+    //};
 
     const scene = new THREE.Scene();
 
@@ -402,80 +566,256 @@ export default function Belt(props: any) {
                     </>
                 }
             >
-                <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
-                    <h2 class="text-2xl font-bold p-4">Start/Stop Analyze</h2>
-                    <button class="btn" innerText="Start/Stop Analyze" onClick={() => startStopAnalyze()} />
-                    <h2 class="text-2xl font-bold p-4">Navigate Fast Analyze</h2>
-                    <button class="btn" innerText="Navigate Fast Analyze" onClick={() => navigateFastAnalyze()} />
-                </section>
-                <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
-                    <h2 class="text-2xl font-bold p-4">Sorter Server: connected</h2>
-                    <button class="btn" innerText="Refresh" onClick={() => testTest()} />
-                    <h2 class="text-2xl font-bold p-4">Sorter App: connected</h2>
-                    <button class="btn" innerText="Refresh" onClick={() => testTest()} />
-                </section>
-                <section class="bg-base-300 text-base-800 p-4 flex flex-wrap">
-                    <h1 class="text-2xl font-bold p-4">Belt Web Config</h1>
-                    <button class="btn" innerText="Test" onClick={() => testTest()} />
-                    <div class="form-control p-4">
-                        <label class="input-group cursor-pointer">
-                            <span class="label-text">Conditional Lines</span>
-                            <input type="checkbox" class="toggle toggle-primary" checked onChange={(e) => setConditionalLines(e.currentTarget.checked)} />
-                        </label>
-                    </div>
-                    <div class="form-control p-4">
-                        <label class="input-group cursor-pointer">
-                            <span class="label-text">Display Lines</span>
-                            <input type="checkbox" class="toggle toggle-primary" checked onChange={(e) => setDisplayLines(e.currentTarget.checked)} />
-                        </label>
-                    </div>
-                    <div class="form-control p-4">
-                        <label class="input-group cursor-pointer">
-                            <span class="label-text">Speed:</span>
-
-                            <input type="range" min="0" max="10" step="0.1" value={speed()} class="range range-primary" onInput={(e) => setSpeed(parseFloat(e.currentTarget.value))} onChange={(e) => setSpeed(parseFloat(e.currentTarget.value))} />
-                            <span class="label-text">{speed}</span>
-                        </label>
-                    </div>
-                </section>
                 <div class="flex flex-wrap">
-                    <section class="overflow-auto bg-base-300 text-base-800 p-4 h-[854px] min-w-[520px]">
+                    <section class="bg-base-300 text-base-800 shrink">
+                        <div class="flex flex-wrap  p-4 shrink ">
+                            <label class="label cursor-pointer gap-3" >
+                                <input type="radio" name="radio-0" class="radio" checked value="nav" onChange={(e) => setDisplaySwitch(e.currentTarget.value)} />
+                                <span class="label-text">Navigation</span>
+                            </label>
+                            <label class="label cursor-pointer gap-3">
+                                <input type="radio" name="radio-0" class="radio" value="rend-prev" onChange={(e) => setDisplaySwitch(e.currentTarget.value)} />
+                                <span class="label-text">Clasification<br />Render</span>
+                            </label>
+                            <label class="label cursor-pointer gap-3">
+                                <input type="radio" name="radio-0" class="radio" value="cam-prev" onChange={(e) => {
+                                    setDisplaySwitch(e.currentTarget.value)
+                                    getPrev()
+                                }} />
+                                <span class="label-text">Camera<br />Preview</span>
+                            </label>
+                            <label class="label cursor-pointer gap-3">
+                                <input type="radio" name="radio-0" class="radio" value="cam-set" onChange={(e) => {
+                                    setDisplaySwitch(e.currentTarget.value)
+                                    getConfigAndConstraints()
+                                }} />
+                                <span class="label-text">Camera<br />Settings</span>
+                            </label>
+                            <label class="label cursor-pointer gap-3">
+                                <input type="radio" name="radio-0" class="radio" value="rend-set" onChange={(e) => setDisplaySwitch(e.currentTarget.value)} />
+                                <span class="label-text">Render<br />Settings</span>
+                            </label>
+                        </div>
+                        <Switch>
+                            <Match when={displaySwitch() == "rend-prev"}>
+                                <section class="bg-base-300 text-base-800 p-4">
+                                    <div class="mockup-phone">
+                                        <div class="camera"></div>
+                                        <div class="display">
+                                            {renderer.domElement}
+                                        </div>
+                                    </div>
+                                </section>
+                            </Match>
+                            <Match when={displaySwitch() == "cam-prev"}>
+                                <section class="bg-base-300 text-base-800 p-4">
+                                    <div class="mockup-phone">
+                                        <div class="camera"></div>
+                                        <div class="display  w-[480px] h-[854px]">
+                                            <div class="relative w-[480px] h-[854px]  ">
+                                                <Show when={image() != ""} fallback={
+                                                    <div class="artboard artboard-demo gap-4 h-[854px]">
+                                                        <div>
+                                                            No preview
+                                                        </div>
+                                                        <Show when={!connection()}>
+                                                            Connect using button on navbar
+                                                        </Show>
+                                                        <button class="btn w-48" disabled={!connection()} innerText="Get preview" onClick={() => getPrev()} />
+                                                    </div>
+                                                }>
+                                                    <img src={image()} class="w-[854px] h-[480px] max-w-none origin-top-left translate-x-[480px] rotate-90 " />
+                                                    <button class="absolute top-4 left-4 btn w-24" innerText="Refresh preview" onClick={() => getPrev()} />
+                                                    <button class="absolute top-4 right-4 btn w-24" innerText={startStopTimerPreviewText()} onClick={() => startStopTimerPreview()} />
+                                                </Show>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </Match>
+                            <Match when={displaySwitch() == "nav"}>
+                                <section class="bg-base-300 text-base-800 p-4">
+                                    <div class="mockup-phone">
+                                        <div class="camera"></div>
+                                        <div class="display w-[480px] h-[854px]">
+                                            <div class="artboard artboard-demo gap-4 h-[854px]">
+                                                <Show when={!connection()}>
+                                                    Connect using button on navbar
+                                                </Show>
+                                                <Switch>
+                                                    <Match when={navigationSwitch() == "nav"}>
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateAnalyze()}>Analyze</button>
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateSort()}>Sort</button>
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateFastAnalyze()}>Fast Analyze</button>
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
+                                                    </Match>
+                                                    <Match when={navigationSwitch() == "analyze"}>
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
+                                                    </Match>
+                                                    <Match when={navigationSwitch() == "sort"}>
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
+                                                    </Match>
+                                                    <Match when={navigationSwitch() == "analyzeFast"}>
+                                                        <button class="btn w-48" disabled={!connection()} innerText="Start/Stop Analyze" onClick={() => startStopAnalyze()} />
+                                                        <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
+                                                    </Match>
+                                                </Switch>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </Match>
+                            <Match when={displaySwitch() == "cam-set"}>
+                                <section class="bg-base-300 text-base-800 p-4">
+                                    <div class="mockup-phone">
+                                        <div class="camera"></div>
+                                        <div class="display w-[480px] h-[854px]">
+                                            <div class="artboard artboard-demo gap-4 h-[854px]">
+                                                <Show when={!connection()}>
+                                                    Connect using button on navbar
+                                                </Show>
+                                                <button class="btn  w-48" innerText="Get Config" disabled={!connection()} onClick={() => getConfigAndConstraints()} />
+                                                <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
+                                                    <div class="card-body">
+                                                        <div class="form-control  w-full max-w-xs">
+                                                            <label class="label cursor-pointer">
+                                                                <span class="label-text">Custom exposure settings</span>
+                                                                <input type="checkbox" class="toggle" disabled={!connection()} checked={manual_settings()} onChange={(e) => setManual_settings(e.currentTarget.checked)} />
+                                                                {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
+                                                            </label>
+                                                        </div>
 
-                        <button class="btn" innerText="start" onClick={() => testTest()} />
+                                                        <div class="form-control w-full max-w-xs">
+                                                            <label class="label">
+                                                                <span class="label-text">Sensor exposure time (ms)</span>
+                                                                <span class="label-text-alt">{frequency()} Hz</span>
+                                                            </label>
+                                                            <input type="number" step="0.000001" min={exposureTimeRangeMin()} max={exposureTimeRangeMax()} placeholder="Not set" class="input input-bordered w-full max-w-xs" value={sensor_exposure_time()} disabled={!manual_settings() || !connection()}
+                                                                onChange={
+                                                                    (e) => {
+                                                                        if (parseFloat(e.currentTarget.value) >= exposureTimeRangeMin() && parseFloat(e.currentTarget.value) <= exposureTimeRangeMax())
+                                                                            setSensor_exposure_time(e.currentTarget.value)
+                                                                        else {
+                                                                            if (e.currentTarget.value != "")
+                                                                                e.currentTarget.value = sensor_exposure_time()
+                                                                            else
+                                                                                setSensor_exposure_time(e.currentTarget.value)
+                                                                        }
+
+                                                                    }} />
+                                                            <label class="label">
+                                                                <span class="label-text-alt">Min {exposureTimeRangeMin()} ms</span>
+                                                                <span class="label-text-alt">Max {exposureTimeRangeMax()} ms</span>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-control w-full max-w-xs">
+                                                            <label class="label">
+                                                                <span class="label-text">Sensor sensitivity</span>
+                                                                <span class="label-text-alt">ISO</span>
+                                                            </label>
+                                                            <input type="number" step="1" min={sensitivityRangeMin()} max={sensitivityRangeMax()} placeholder="Not set" class="input input-bordered w-full max-w-xs" value={sensor_sensitivity()} disabled={!manual_settings() || !connection()}
+                                                                onChange={
+                                                                    (e) => {
+                                                                        if (parseInt(e.currentTarget.value) >= sensitivityRangeMin() && parseInt(e.currentTarget.value) <= sensitivityRangeMax())
+                                                                            setSensor_sensitivity(e.currentTarget.value)
+                                                                        else {
+                                                                            if (e.currentTarget.value != "")
+                                                                                e.currentTarget.value = sensor_sensitivity()
+                                                                            else
+                                                                                setSensor_sensitivity(e.currentTarget.value)
+                                                                        }
+
+                                                                    }} />
+                                                            <label class="label">
+                                                                <span class="label-text-alt">Min {sensitivityRangeMin()}</span>
+                                                                <span class="label-text-alt">Max {sensitivityRangeMax()}</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn w-48" disabled={!connection()}  innerText="Save Config" onClick={() => setConfig()} />
+                                                <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
+                                                    <div class="card-body">
+                                                        <div class="form-control w-full max-w-xs">
+                                                            <label class="label">
+                                                                <span class="label-text">Preview update rate</span>
+                                                                <span class="label-text-alt">ms</span>
+                                                            </label>
+                                                            <input type="number" step="1" min="1" placeholder="Not set" class="input input-bordered w-full max-w-xs" value={camera_preview_time()}
+                                                                onChange={
+                                                                    (e) => {
+                                                                        if (parseInt(e.currentTarget.value) >= 1)
+                                                                            setCamera_preview_time(parseInt(e.currentTarget.value))
+                                                                        else {
+                                                                            if (e.currentTarget.value != "")
+                                                                                e.currentTarget.value = camera_preview_time().toString()
+                                                                            else
+                                                                                setCamera_preview_time(500)
+                                                                        }
+
+                                                                    }} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </Match>
+                            <Match when={displaySwitch() == "rend-set"}>
+                                <section class="bg-base-300 text-base-800 p-4">
+                                    <div class="mockup-phone">
+                                        <div class="camera"></div>
+                                        <div class="display w-[480px] h-[854px]">
+                                            <div class="artboard artboard-demo gap-4 h-[854px] bg-base-100">
+                                                <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
+                                                    <div class="card-body">
+                                                        <div class="form-control  w-full max-w-xs">
+                                                            <label class="label cursor-pointer">
+                                                                <span class="label-text">Conditional Lines</span>
+                                                                <input type="checkbox" class="toggle" checked={conditionalLines()} onChange={(e) => setConditionalLines(e.currentTarget.checked)} />
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-control w-full max-w-xs">
+                                                            <label class="label cursor-pointer">
+                                                                <span class="label-text">Display Lines</span>
+                                                                <input type="checkbox" class="toggle" checked={displayLines()} onChange={(e) => setDisplayLines(e.currentTarget.checked)} />
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-control w-full max-w-xs">
+                                                            <label class="label">
+                                                                <span class="label-text">Speed:</span>
+                                                                <span class="label-text-alt">{speed}</span>
+                                                            </label>
+                                                            {/*<label class="input-group cursor-pointer">*/}
+                                                            {/*    <span class="label-text bg-base-100">Speed:</span>*/}
+
+                                                            {/*    <span class="label-text bg-base-100">{speed}</span>*/}
+                                                            {/*</label>*/}
+                                                                <input type="range" min="0" max="10" step="0.1" value={speed()} class="range" onInput={(e) => setSpeed(parseFloat(e.currentTarget.value))} onChange={(e) => setSpeed(parseFloat(e.currentTarget.value))} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </Match>
+                        </Switch>
+
+                    </section>
+                    <section class="overflow-auto bg-base-300 text-base-800 p-4 h-[1008px] min-w-[520px]">
+
                         <button class="btn" innerText="Clear Messages" onClick={() => clearMessages()} />
                         <button class="btn" innerText="Clear Lego" onClick={() => clearLegoModels()} />
+                        <button class="btn" innerText="Test Add Lego" onClick={() => testTest()} />
                         <h1 class="text-2xl font-bold">Belt log:</h1>
                         <For each={messages}>
                             {(mes, i) => (
                                 <div>Label: {mes.label} Score:{mes.score} ymin:{mes.ymin} xmin:{mes.xmin} ymax:{mes.ymax} xmax:{mes.xmax}</div>
                             )}
                         </For>
-                    </section>
-                    <section class="bg-base-300 text-base-800 p-4">
-                        <div class="mockup-phone">
-                            <div class="camera"></div>
-                            <div class="display">
-                                {renderer.domElement}
-                            </div>
-                        </div>
-                    </section>
-                    <section class="bg-base-300 text-base-800 p-4">
-                    <div class="mockup-phone">
-                        <div class="camera"></div>
-                        <div class="display">
-                                <div class="artboard artboard-demo phone-5 gap-4 mt-[-21px] mb-[-21px]">
-                                <Switch>
-                                    <Match when={true}>
-                                            <button class="btn w-96" onClick={() => navigateBack()}>Back</button>
-                                            <button class="btn w-96" onClick={() => navigateAnalyze()}>Analyze</button>
-                                            <button class="btn w-96" onClick={() => navigateSort()}>Sort</button>
-                                            <button class="btn w-96" onClick={() => navigateFastAnalyze()}>Fast Analyze</button>
-                                    </Match>
-                                </Switch>
-                            </div>
-
-                        </div>
-                        </div>
                     </section>
                 </div>
             </Show>
