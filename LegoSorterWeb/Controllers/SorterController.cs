@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using LegoSorterWeb.Data;
 using LegoSorterWeb.proto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,14 +10,36 @@ namespace LegoSorterWeb.Controllers
     [ApiController]
     public class SorterController : ControllerBase
     {
-
+        string address;
+        string port;
         Channel channel;
 
-        public SorterController(string address = "127.0.0.1:50052")
+        private readonly LegoSorterWebContext _context;
+
+
+        public SorterController(LegoSorterWebContext context)
         {
+            _context = context;
+            string address = "127.0.0.1";
+            string port = "50052";
+            if (_context.Configurations != null)
+            {
+                var db_address = _context.Configurations.Find("server_address");
+                if (db_address != null&& db_address.Value!=null)
+                {
+                    address = db_address.Value;
+                }
+                var db_port = _context.Configurations.Find("server_port");
+                if (db_port != null && db_port.Value != null)
+                {
+                    port = db_port.Value;
+                }
+            }
+            this.address = address;
+            this.port = port;
             var channelOptions = new List<ChannelOption>();
             channelOptions.Add(new ChannelOption("grpc.max_receive_message_length", 16 * 1024 * 1024));
-            this.channel = new Channel(address, ChannelCredentials.Insecure, channelOptions);
+            this.channel = new Channel($"{address}:{port}", ChannelCredentials.Insecure, channelOptions);
         }
 
         [HttpGet]
@@ -31,13 +54,18 @@ namespace LegoSorterWeb.Controllers
             return r;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SetChanel(string address)
+        [HttpPatch]
+        public async Task<IActionResult> PatchChannel(string address, string port)
         {
-            channel.ShutdownAsync().Wait();
-            var channelOptions = new List<ChannelOption>();
-            channelOptions.Add(new ChannelOption("grpc.max_receive_message_length", 16 * 1024 * 1024));
-            this.channel = new Channel(address, ChannelCredentials.Insecure, channelOptions);
+            if (this.address != address || this.port != port)
+            {
+                channel.ShutdownAsync().Wait();
+                var channelOptions = new List<ChannelOption>();
+                channelOptions.Add(new ChannelOption("grpc.max_receive_message_length", 16 * 1024 * 1024));
+                this.channel = new Channel($"{address}:{port}", ChannelCredentials.Insecure, channelOptions);
+                this.address = address;
+                this.port = port;
+            }
 
             return NoContent();
         }

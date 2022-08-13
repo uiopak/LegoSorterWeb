@@ -43,13 +43,13 @@ export default function PageWrapper() {
                     </a>
                 </div>
                 <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/config">
-                        Config
+                    <a class="btn btn-ghost normal-case text-xl" href="/control">
+                        App Config
                     </a>
                 </div>
                 <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/control">
-                        Control
+                    <a class="btn btn-ghost normal-case text-xl" href="/config">
+                        Server Config
                     </a>
                 </div>
                 <div class="flex-1">
