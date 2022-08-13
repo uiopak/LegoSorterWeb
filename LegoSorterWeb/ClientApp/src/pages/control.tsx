@@ -23,6 +23,9 @@ export default function Control() {
         { sensitivityRangeMax, setSensitivityRangeMax },
         { savedAddr, setSavedAddr },
         { savedWebAddr, setSavedWebAddr },
+        { state, setState },
+        { saveImgSwitchVal, setSaveImgSwitchVal },
+        { savedSession, setSavedSession },
         { conected, disconected }] = useConection();
 
     const frequency = () => {

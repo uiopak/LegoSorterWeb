@@ -36,10 +36,26 @@ namespace LegoSorterWeb.Hubs
         {
             await Clients.All.SendAsync("sendPong");
         }
+
         // Phone sends to web browser to inform that it disconnects
         public async Task sendEndPong()
         {
             await Clients.All.SendAsync("sendEndPong");
+        }
+
+        // Web browser asks Phone for its state
+        public async Task getState()
+        {
+            await Clients.All.SendAsync("getState");
+        }
+        // Phone sends to web browser its state
+        public async Task returnState(String state)
+        {
+            await Clients.All.SendAsync("returnState", state);
+        }
+        public async Task sendAnalysisEndPong()
+        {
+            await Clients.All.SendAsync("sendAnalysisEndPong");
         }
 
         public async Task setConfigs(Configs configs)
@@ -68,6 +84,21 @@ namespace LegoSorterWeb.Hubs
         public async Task setConnectionConfigs(String savedAddr, String savedWebAddr)
         {
             await Clients.All.SendAsync("setConnectionConfigs", savedAddr, savedWebAddr);
+        }
+
+        public async Task getSession()
+        {
+            await Clients.All.SendAsync("getSession");
+        }
+
+        public async Task sendSession(Boolean saveImgSwitchVal, String savedSession)
+        {
+            await Clients.All.SendAsync("sendSession", saveImgSwitchVal, savedSession);
+        }
+
+        public async Task setSession(Boolean saveImgSwitchVal, String savedSession)
+        {
+            await Clients.All.SendAsync("setSession", saveImgSwitchVal, savedSession);
         }
 
         public async Task getConfigs()

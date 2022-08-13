@@ -25,6 +25,9 @@ export default function PageWrapper() {
         { sensitivityRangeMax, setSensitivityRangeMax },
         { savedAddr, setSavedAddr },
         { savedWebAddr, setSavedWebAddr },
+        { state, setState },
+        { saveImgSwitchVal, setSaveImgSwitchVal },
+        { savedSession, setSavedSession },
         { conected, disconected }] = useConection();
     return (
         <>

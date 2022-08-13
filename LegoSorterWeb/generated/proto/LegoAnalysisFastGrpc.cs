@@ -49,6 +49,8 @@ namespace LegoSorterWeb.proto {
     static readonly grpc::Marshaller<global::LegoSorterWeb.proto.ImageRequest> __Marshaller_common_ImageRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::LegoSorterWeb.proto.ImageRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::LegoSorterWeb.proto.ListOfBoundingBoxes> __Marshaller_common_ListOfBoundingBoxes = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::LegoSorterWeb.proto.ListOfBoundingBoxes.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::LegoSorterWeb.proto.FastImageRequest> __Marshaller_analysis_FastImageRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::LegoSorterWeb.proto.FastImageRequest.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::LegoSorterWeb.proto.ImageRequest, global::LegoSorterWeb.proto.ListOfBoundingBoxes> __Method_DetectBricks = new grpc::Method<global::LegoSorterWeb.proto.ImageRequest, global::LegoSorterWeb.proto.ListOfBoundingBoxes>(
@@ -59,11 +61,11 @@ namespace LegoSorterWeb.proto {
         __Marshaller_common_ListOfBoundingBoxes);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::LegoSorterWeb.proto.ImageRequest, global::LegoSorterWeb.proto.ListOfBoundingBoxes> __Method_DetectAndClassifyBricks = new grpc::Method<global::LegoSorterWeb.proto.ImageRequest, global::LegoSorterWeb.proto.ListOfBoundingBoxes>(
+    static readonly grpc::Method<global::LegoSorterWeb.proto.FastImageRequest, global::LegoSorterWeb.proto.ListOfBoundingBoxes> __Method_DetectAndClassifyBricks = new grpc::Method<global::LegoSorterWeb.proto.FastImageRequest, global::LegoSorterWeb.proto.ListOfBoundingBoxes>(
         grpc::MethodType.Unary,
         __ServiceName,
         "DetectAndClassifyBricks",
-        __Marshaller_common_ImageRequest,
+        __Marshaller_analysis_FastImageRequest,
         __Marshaller_common_ListOfBoundingBoxes);
 
     /// <summary>Service descriptor</summary>
@@ -120,22 +122,22 @@ namespace LegoSorterWeb.proto {
         return CallInvoker.AsyncUnaryCall(__Method_DetectBricks, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::LegoSorterWeb.proto.ListOfBoundingBoxes DetectAndClassifyBricks(global::LegoSorterWeb.proto.ImageRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::LegoSorterWeb.proto.ListOfBoundingBoxes DetectAndClassifyBricks(global::LegoSorterWeb.proto.FastImageRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return DetectAndClassifyBricks(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::LegoSorterWeb.proto.ListOfBoundingBoxes DetectAndClassifyBricks(global::LegoSorterWeb.proto.ImageRequest request, grpc::CallOptions options)
+      public virtual global::LegoSorterWeb.proto.ListOfBoundingBoxes DetectAndClassifyBricks(global::LegoSorterWeb.proto.FastImageRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_DetectAndClassifyBricks, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::LegoSorterWeb.proto.ListOfBoundingBoxes> DetectAndClassifyBricksAsync(global::LegoSorterWeb.proto.ImageRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::LegoSorterWeb.proto.ListOfBoundingBoxes> DetectAndClassifyBricksAsync(global::LegoSorterWeb.proto.FastImageRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return DetectAndClassifyBricksAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::LegoSorterWeb.proto.ListOfBoundingBoxes> DetectAndClassifyBricksAsync(global::LegoSorterWeb.proto.ImageRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::LegoSorterWeb.proto.ListOfBoundingBoxes> DetectAndClassifyBricksAsync(global::LegoSorterWeb.proto.FastImageRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_DetectAndClassifyBricks, null, options, request);
       }

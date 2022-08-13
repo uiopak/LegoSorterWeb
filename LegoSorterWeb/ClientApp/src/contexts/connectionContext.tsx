@@ -35,6 +35,8 @@ export const makeConnectionContext = (connected = false) => {
         connectionControl.send("getConfigs")
         connectionControl.send("getConfigsConstraints")
         connectionControl.send("getConnectionConfigs")
+        connectionControl.send("getState")
+        connectionControl.send("getSession")
     });
     connectionControl.on("sendEndPong", () => {
         setConection(false)
@@ -88,7 +90,17 @@ export const makeConnectionContext = (connected = false) => {
         setSavedAddr(savedAddr)
         setSavedWebAddr(savedWebAddr)
     });
+    const [state, setState] = createSignal("startFragment");
+    connectionControl.on("returnState", (restState: string) => {
+        setState(restState)
+    });
 
+    const [saveImgSwitchVal, setSaveImgSwitchVal] = createSignal(false);
+    const [savedSession, setSavedSession] = createSignal("Session_1");
+    connectionControl.on("sendSession", (saveImgSwitchVal: boolean, savedSession: string) => {
+        setSaveImgSwitchVal(saveImgSwitchVal)
+        setSavedSession(savedSession)
+    })
 
     connectionControl.start().catch((err: string) => console.log(err));
     //const [connectedInterval, setConnectedInterval] = signal
@@ -127,6 +139,9 @@ export const makeConnectionContext = (connected = false) => {
         { sensitivityRangeMax, setSensitivityRangeMax },
         { savedAddr, setSavedAddr },
         { savedWebAddr, setSavedWebAddr },
+        { state, setState },
+        { saveImgSwitchVal, setSaveImgSwitchVal },
+        { savedSession, setSavedSession },
         {
             conected() {
                 setConection(true)

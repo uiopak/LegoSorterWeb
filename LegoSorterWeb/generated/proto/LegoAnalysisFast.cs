@@ -25,19 +25,289 @@ namespace LegoSorterWeb.proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Chxwcm90by9MZWdvQW5hbHlzaXNGYXN0LnByb3RvEghhbmFseXNpcxoUcHJv",
-            "dG8vTWVzc2FnZXMucHJvdG8yowEKEExlZ29BbmFseXNpc0Zhc3QSQQoMRGV0",
-            "ZWN0QnJpY2tzEhQuY29tbW9uLkltYWdlUmVxdWVzdBobLmNvbW1vbi5MaXN0",
-            "T2ZCb3VuZGluZ0JveGVzEkwKF0RldGVjdEFuZENsYXNzaWZ5QnJpY2tzEhQu",
-            "Y29tbW9uLkltYWdlUmVxdWVzdBobLmNvbW1vbi5MaXN0T2ZCb3VuZGluZ0Jv",
-            "eGVzQkgKGWNvbS5sc29ydGVyLmFuYWx5c2lzLmZhc3RCFUxlZ29BbmFseXNp",
-            "c0Zhc3RQcm90b6oCE0xlZ29Tb3J0ZXJXZWIucHJvdG9iBnByb3RvMw=="));
+            "dG8vTWVzc2FnZXMucHJvdG8iRAoQRmFzdEltYWdlUmVxdWVzdBINCgVpbWFn",
+            "ZRgBIAEoDBIQCghyb3RhdGlvbhgCIAEoBRIPCgdzZXNzaW9uGAMgASgJMqkB",
+            "ChBMZWdvQW5hbHlzaXNGYXN0EkEKDERldGVjdEJyaWNrcxIULmNvbW1vbi5J",
+            "bWFnZVJlcXVlc3QaGy5jb21tb24uTGlzdE9mQm91bmRpbmdCb3hlcxJSChdE",
+            "ZXRlY3RBbmRDbGFzc2lmeUJyaWNrcxIaLmFuYWx5c2lzLkZhc3RJbWFnZVJl",
+            "cXVlc3QaGy5jb21tb24uTGlzdE9mQm91bmRpbmdCb3hlc0JIChljb20ubHNv",
+            "cnRlci5hbmFseXNpcy5mYXN0QhVMZWdvQW5hbHlzaXNGYXN0UHJvdG+qAhNM",
+            "ZWdvU29ydGVyV2ViLnByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::LegoSorterWeb.proto.MessagesReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(null, null, null));
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::LegoSorterWeb.proto.FastImageRequest), global::LegoSorterWeb.proto.FastImageRequest.Parser, new[]{ "Image", "Rotation", "Session" }, null, null, null, null)
+          }));
     }
     #endregion
 
   }
+  #region Messages
+  public sealed partial class FastImageRequest : pb::IMessage<FastImageRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FastImageRequest> _parser = new pb::MessageParser<FastImageRequest>(() => new FastImageRequest());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FastImageRequest> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::LegoSorterWeb.proto.LegoAnalysisFastReflection.Descriptor.MessageTypes[0]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FastImageRequest() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FastImageRequest(FastImageRequest other) : this() {
+      image_ = other.image_;
+      rotation_ = other.rotation_;
+      session_ = other.session_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FastImageRequest Clone() {
+      return new FastImageRequest(this);
+    }
+
+    /// <summary>Field number for the "image" field.</summary>
+    public const int ImageFieldNumber = 1;
+    private pb::ByteString image_ = pb::ByteString.Empty;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString Image {
+      get { return image_; }
+      set {
+        image_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "rotation" field.</summary>
+    public const int RotationFieldNumber = 2;
+    private int rotation_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int Rotation {
+      get { return rotation_; }
+      set {
+        rotation_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "session" field.</summary>
+    public const int SessionFieldNumber = 3;
+    private string session_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Session {
+      get { return session_; }
+      set {
+        session_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FastImageRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FastImageRequest other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Image != other.Image) return false;
+      if (Rotation != other.Rotation) return false;
+      if (Session != other.Session) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Image.Length != 0) hash ^= Image.GetHashCode();
+      if (Rotation != 0) hash ^= Rotation.GetHashCode();
+      if (Session.Length != 0) hash ^= Session.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Image.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Image);
+      }
+      if (Rotation != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(Rotation);
+      }
+      if (Session.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Session);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Image.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Image);
+      }
+      if (Rotation != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(Rotation);
+      }
+      if (Session.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Session);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Image.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Image);
+      }
+      if (Rotation != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Rotation);
+      }
+      if (Session.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Session);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FastImageRequest other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Image.Length != 0) {
+        Image = other.Image;
+      }
+      if (other.Rotation != 0) {
+        Rotation = other.Rotation;
+      }
+      if (other.Session.Length != 0) {
+        Session = other.Session;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Image = input.ReadBytes();
+            break;
+          }
+          case 16: {
+            Rotation = input.ReadInt32();
+            break;
+          }
+          case 26: {
+            Session = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Image = input.ReadBytes();
+            break;
+          }
+          case 16: {
+            Rotation = input.ReadInt32();
+            break;
+          }
+          case 26: {
+            Session = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  #endregion
+
 }
 
 #endregion Designer generated code

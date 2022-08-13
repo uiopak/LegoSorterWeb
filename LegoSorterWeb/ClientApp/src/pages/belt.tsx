@@ -41,11 +41,14 @@ export default function Belt(props: any) {
         { sensitivityRangeMax, setSensitivityRangeMax },
         { savedAddr, setSavedAddr },
         { savedWebAddr, setSavedWebAddr },
+        { state, setState },
+        { saveImgSwitchVal, setSaveImgSwitchVal },
+        { savedSession, setSavedSession },
         { conected, disconected }] = useConection();
 
     const defaultProps = mergeProps({ gui: true }, props);
 
-    const localSpeed = localStorage.getItem("speed")||"1";
+    const localSpeed = localStorage.getItem("speed") || "1";
     const [speed, setSpeed] = createSignal(parseFloat(localSpeed));
     createEffect(() => localStorage.setItem("speed", JSON.stringify(speed())))
 
@@ -56,7 +59,7 @@ export default function Belt(props: any) {
     const localConditionalLines = localStorage.getItem("conditionalLines") || "true";
     const [conditionalLines, setConditionalLines] = createSignal(JSON.parse(localConditionalLines));
     createEffect(() => localStorage.setItem("conditionalLines", JSON.stringify(conditionalLines())))
-        
+
     const local_camera_preview_time = localStorage.getItem("camera_preview_time") || "500";
     const [camera_preview_time, setCamera_preview_time] = createSignal(parseInt(local_camera_preview_time));
     createEffect(() => localStorage.setItem("camera_preview_time", JSON.stringify(camera_preview_time())))
@@ -75,10 +78,9 @@ export default function Belt(props: any) {
         var response = data()
         if (response != undefined) {
             const responseBlob = await response.blob()
-            setImage(URL.createObjectURL(responseBlob))
-            var t = 12
+            if(responseBlob.size>0)
+                setImage(URL.createObjectURL(responseBlob))
         }
-        //var res = await fetch(`/api/Sorter/`);
     }
 
     const [startStopTimerPreviewText, setStartStopTimerPreviewText] = createSignal("Start timer");
@@ -122,6 +124,7 @@ export default function Belt(props: any) {
     function navigateFastAnalyze() {
         sendNavigation("analyzeFast")
         setNavigationSwitch("analyzeFast")
+        connectionControl.send("getSession")
     }
     function navigateAnalyze() {
         sendNavigation("analyze")
@@ -212,7 +215,9 @@ export default function Belt(props: any) {
         getConfig()
         getConfigsConstraints()
     }
-
+    function getSession() {
+        connectionControl.send("getSession")
+    }
     //const [capture_mode_preference, setCapture_mode_preference] = createSignal("0");
     //const [capture_resolution_value, setCapture_resolution_value] = createSignal("0");
     //const [analysis_resolution_value, setAnalysis_resolution_value] = createSignal("0");
@@ -236,6 +241,10 @@ export default function Belt(props: any) {
             run_conveyor_time_value: run_conveyor_time_value()
         }
         connectionControl.send("setConfigs", conf)
+    }
+
+    function setSession() {
+        connectionControl.send("setSession", saveImgSwitchVal(), savedSession())
     }
 
     //camera config end
@@ -624,7 +633,8 @@ export default function Belt(props: any) {
                                                         <button class="btn w-48" disabled={!connection()} innerText="Get preview" onClick={() => getPrev()} />
                                                     </div>
                                                 }>
-                                                    <img src={image()} class="w-[854px] h-[480px] max-w-none origin-top-left translate-x-[480px] rotate-90 " />
+                                                    {/*<img src={image()} class="w-[854px] h-[480px] max-w-none origin-top-left translate-x-[480px] rotate-90 " />*/}{/*If image require 90 rotation*/}
+                                                    <img src={image()} class="w-[480px] h-[854px] max-w-none" />
                                                     <button class="absolute top-4 left-4 btn w-24" innerText="Refresh preview" onClick={() => getPrev()} />
                                                     <button class="absolute top-4 right-4 btn w-24" innerText={startStopTimerPreviewText()} onClick={() => startStopTimerPreview()} />
                                                 </Show>
@@ -642,21 +652,62 @@ export default function Belt(props: any) {
                                                 <Show when={!connection()}>
                                                     Connect using button on navbar
                                                 </Show>
-                                                <Switch>
-                                                    <Match when={navigationSwitch() == "nav"}>
+                                                    {/*<Match when={state() == "startFragment"}>*/}
+                                                        {/*<Match when={navigationSwitch() == "nav"}>*/}
+                                                <Switch fallback={
+                                                    <>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateAnalyze()}>Analyze</button>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateSort()}>Sort</button>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateFastAnalyze()}>Fast Analyze</button>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
-                                                    </Match>
-                                                    <Match when={navigationSwitch() == "analyze"}>
+                                                    </>
+                                                }>
+                                                    {/*</Match>*/}
+                                                    
+                                                    <Match when={state() == "analyzeFragment" || state() == "analyzeFragmentAnalysisStarted"}>
+                                                        {/*<Match when={navigationSwitch() == "analyze"}>*/}
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
-                                                    <Match when={navigationSwitch() == "sort"}>
+                                                    <Match when={state() == "sortFragment" || state() == "sortFragmentSortingStarted"}>
+                                                        {/*<Match when={navigationSwitch() == "sort"}>*/}
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
-                                                    <Match when={navigationSwitch() == "analyzeFast"}>
-                                                        <button class="btn w-48" disabled={!connection()} innerText="Start/Stop Analyze" onClick={() => startStopAnalyze()} />
+                                                    <Match when={state() == "analyzeFastFragment" || state() =="analyzeFastFragmentAnalysisStarted"}>
+                                                        {/*<Match when={navigationSwitch() == "analyzeFast"}>*/}
+                                                        <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
+                                                            <div class="card-body">
+                                                                <div class="form-control  w-full max-w-xs">
+                                                                    <label class="label cursor-pointer">
+                                                                        <span class="label-text">Store images on server</span>
+                                                                        <input type="checkbox" class="toggle" disabled={!connection()} checked={saveImgSwitchVal()}
+                                                                            onChange={(e) => setSaveImgSwitchVal(e.currentTarget.checked)}
+                                                                        />
+                                                                        {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-control w-full max-w-xs">
+                                                                    <label class="label">
+                                                                        <span class="label-text">Session name</span>
+                                                                    </label>
+                                                                    <input type="text" placeholder="Not set (disabled storage)" class="input input-bordered w-full max-w-xs" value={savedSession()} disabled={!saveImgSwitchVal() || !connection()}
+                                                                        onChange={(e) => { setSavedSession(e.currentTarget.value) }} />
+                                                                </div>
+                                                                {/*<button class="btn w-48" disabled={!connection()} innerText="Save" onClick={() => setSession()} />*/}
+                                                                <div class="flex flex-row">
+                                                                    <div class="basis-1/2 justify-items-center grid ">
+                                                                        <button class="btn w-24" innerText="Refresh" disabled={!connection()} onClick={() => getSession()} />
+                                                                    </div>
+                                                                    <div class="basis-1/2 justify-items-center grid ">
+                                                                        <button class="btn w-24" innerText="Save" disabled={!connection()} onClick={() => setSession()} />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <Show when={state() == "analyzeFastFragmentAnalysisStarted"} fallback={
+                                                            <button class="btn w-48" disabled={!connection()} innerText="Start Analyze" onClick={() => startStopAnalyze()} />
+                                                        }>
+                                                            <button class="btn w-48" disabled={!connection()} innerText="Stop Analyze" onClick={() => startStopAnalyze()} />
+                                                        </Show>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
                                                 </Switch>
@@ -734,7 +785,7 @@ export default function Belt(props: any) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button class="btn w-48" disabled={!connection()}  innerText="Save Config" onClick={() => setConfig()} />
+                                                <button class="btn w-48" disabled={!connection()} innerText="Save Config" onClick={() => setConfig()} />
                                                 <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
                                                     <div class="card-body">
                                                         <div class="form-control w-full max-w-xs">
@@ -793,7 +844,7 @@ export default function Belt(props: any) {
 
                                                             {/*    <span class="label-text bg-base-100">{speed}</span>*/}
                                                             {/*</label>*/}
-                                                                <input type="range" min="0" max="10" step="0.1" value={speed()} class="range" onInput={(e) => setSpeed(parseFloat(e.currentTarget.value))} onChange={(e) => setSpeed(parseFloat(e.currentTarget.value))} />
+                                                            <input type="range" min="0" max="10" step="0.1" value={speed()} class="range" onInput={(e) => setSpeed(parseFloat(e.currentTarget.value))} onChange={(e) => setSpeed(parseFloat(e.currentTarget.value))} />
                                                         </div>
                                                     </div>
                                                 </div>
