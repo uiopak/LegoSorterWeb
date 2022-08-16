@@ -290,8 +290,9 @@ export default function Belt(props: any) {
         console.log("messageReceived")
         clearLegoModels();
         for (var message of new_messages) {
-            if (messages.length > 10) {
-                setMessages((m) => { m.shift(); return m; })
+            if (messages.length > 36) {
+                var mes = messages.slice(-36)
+                setMessages(mes!);
             }
             setMessages(messages.length, {
                 ymin: message.ymin,
