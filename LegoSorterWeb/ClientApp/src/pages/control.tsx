@@ -15,6 +15,7 @@ export default function Control() {
         { sorter_conveyor_speed_value, setSorter_conveyor_speed_value },
         { sorter_mode_preference, setSorter_mode_preference },
         { run_conveyor_time_value, setRun_conveyor_time_value },
+        { analysis_minimum_delay, set_analysis_minimum_delay },
         { cameraCompensationRangeMin, setCameraCompensationRangeMin },
         { cameraCompensationRangeMax, setCameraCompensationRangeMax },
         { exposureTimeRangeMin, setExposureTimeRangeMin },
@@ -26,6 +27,24 @@ export default function Control() {
         { state, setState },
         { saveImgSwitchVal, setSaveImgSwitchVal },
         { savedSession, setSavedSession },
+        { serverGrpcPort, setServerGrpcPort },
+        { serverApiPort, setServerApiPort },
+        { serverFiftyonePort, setServerFiftyonePort },
+        { serverFiftyoneAddress, setServerFiftyoneAddress },
+        { address, setAddress },
+        { webConfigRecived, setWebConfigRecived },
+        { fetchWebConfigs, saveWebConfigs },
+        { grpcPort1, setGrpcPort1 },
+        { grpcPort2, setGrpcPort2 },
+        { apiPort, setApiPort },
+        { webAddress, setWebAddress },
+        { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
+        { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
+        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
+        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
+        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { serverConfigRecived, setServerConfigRecived },
+        { fetchServerConfigs, saveServerConfigs },
         { conected, disconected }] = useConection();
 
     const frequency = () => {
@@ -161,7 +180,26 @@ export default function Control() {
                                 <option selected={analysis_resolution_value() == "1"}>480 x 640 (SD)</option>
                                 <option selected={analysis_resolution_value() == "2"}>720 x 1280 (HD)</option>
                                 <option selected={analysis_resolution_value() == "3"}>1080 x 1920 (FHD)</option>
+                                <option selected={analysis_resolution_value() == "4"}>1152 x 2048 (2K)</option>
+                                <option selected={analysis_resolution_value() == "5"}>2160 x 3840 (UHD)</option>
                             </select>
+                        </div>
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">Minimum time delay:</span>
+                            </label>
+                            <input disabled={!connection()} type="number" min="0" placeholder="Type here" class="input input-bordered w-full max-w-xs" value={analysis_minimum_delay()}
+                                onChange={
+                                    (e) => {
+                                        if (parseInt(e.currentTarget.value) >= 0)
+                                            set_analysis_minimum_delay(e.currentTarget.value)
+                                        else {
+                                            e.currentTarget.value = analysis_minimum_delay()
+                                        }
+                                    }} />
+                            <label class="label">
+                                <span class="label-text-alt">Minimum time between image processing in ms (0 - ignore))</span>
+                            </label>
                         </div>
                         <div class="form-control w-full max-w-xs">
                             <label class="label">

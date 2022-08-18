@@ -1,4 +1,4 @@
-import { createSignal, createContext, useContext, from } from "solid-js";
+import { createSignal, createContext, useContext, from, onMount, createEffect } from "solid-js";
 import * as signalR from "@microsoft/signalr";
 
 // https://www.solidjs.com/guides/typescript#context
@@ -14,6 +14,7 @@ export type Configs = {
     sorter_conveyor_speed_value: number,
     sorter_mode_preference: string,
     run_conveyor_time_value: string,
+    analysis_minimum_delay: string,
 };
 
 export type ConfigsConstraints = {
@@ -24,6 +25,20 @@ export type ConfigsConstraints = {
     sensitivityRangeMin: number,
     sensitivityRangeMax: number,
 };
+
+export interface ConfigServerType {
+    option: string,
+    value: string,
+};
+
+export async function http<T>(
+    request: RequestInfo
+): Promise<T> {
+    const response = await fetch(request);
+    const body = await response.json();
+    return body;
+}
+
 
 export const makeConnectionContext = (connected = false) => {
     const [conection, setConection] = createSignal(connected);
@@ -52,6 +67,7 @@ export const makeConnectionContext = (connected = false) => {
     const [sorter_conveyor_speed_value, setSorter_conveyor_speed_value] = createSignal(50);
     const [sorter_mode_preference, setSorter_mode_preference] = createSignal("0");
     const [run_conveyor_time_value, setRun_conveyor_time_value] = createSignal("500");
+    const [analysis_minimum_delay, set_analysis_minimum_delay] = createSignal("0");
 
     connectionControl.on("sendConfigs", conf => {
         var config2 = conf as Configs
@@ -65,6 +81,7 @@ export const makeConnectionContext = (connected = false) => {
         setSorter_conveyor_speed_value(config2.sorter_conveyor_speed_value)
         setSorter_mode_preference(config2.sorter_mode_preference)
         setRun_conveyor_time_value(config2.run_conveyor_time_value)
+        set_analysis_minimum_delay(config2.analysis_minimum_delay)
     })
 
     const [cameraCompensationRangeMin, setCameraCompensationRangeMin] = createSignal(0);
@@ -117,7 +134,168 @@ export const makeConnectionContext = (connected = false) => {
     //    const t = setInterval(() => set(1), 1000);
     //    return () => clearInterval(t);
     //});
-    
+    const fetchWebConfigOption = async (option: any) =>
+        (await fetch(`/api/Configuration/${option}/`)).json();
+
+    function fetchServerAddress(): Promise<any> {
+        return fetchWebConfigOption("server_address");
+    }
+
+    function fetchServerGrpcPort(): Promise<any> {
+        return fetchWebConfigOption("server_grpc_port");
+    }
+
+    function fetchServerApiPort(): Promise<any> {
+        return fetchWebConfigOption("server_api_port");
+    }
+
+
+    const [serverGrpcPort, setServerGrpcPort] = createSignal("");
+    const [serverApiPort, setServerApiPort] = createSignal("");
+    const [address, setAddress] = createSignal("");
+    const [webConfigRecived, setWebConfigRecived] = createSignal(false);
+
+    async function fetchWebConfigs() {
+        setAddress(await fetchServerAddress())
+        setServerGrpcPort(await fetchServerGrpcPort())
+        setServerApiPort(await fetchServerApiPort())
+        setWebConfigRecived(true)
+    }
+
+    onMount(async () => {
+        await fetchWebConfigs()
+    })
+
+    async function saveWebConfigs() {
+        await fetch(`/api/Configuration/server_address/`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            body: JSON.stringify({ "Option": "server_address", "Value": address() })
+        });
+        await fetch(`/api/Configuration/server_port/`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            body: JSON.stringify({ "Option": "server_grpc_port", "Value": serverGrpcPort() })
+        });
+        await fetch(`/api/Configuration/server_api_port/`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            body: JSON.stringify({ "Option": "server_api_port", "Value": serverApiPort() })
+        });
+
+        await fetchWebConfigs();
+
+        await fetch(`/api/Sorter/?` + new URLSearchParams({
+            address: address(),
+            port: serverGrpcPort(),
+        }), {
+            method: "PATCH",
+        });
+    }
+
+    const [grpcPort1, setGrpcPort1] = createSignal("");//server_grpc_port_1
+    const [grpcPort2, setGrpcPort2] = createSignal("");//server_grpc_port_2
+    const [apiPort, setApiPort] = createSignal("");//server_fastapi_port
+    const [webAddress, setWebAddress] = createSignal("");//web_address
+    const [serverFiftyonePort, setServerFiftyonePort] = createSignal("");//server_fiftyone_port
+    const [serverFiftyoneAddress, setServerFiftyoneAddress] = createSignal("");//server_fiftyone_address
+    const [server_grpc_max_workers_1, set_server_grpc_max_workers_1] = createSignal("");//server_grpc_max_workers_1
+    const [server_grpc_max_workers_2, set_server_grpc_max_workers_2] = createSignal("");//server_grpc_max_workers_2
+    const [storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers] = createSignal("");//storageFastRunerExecutor_max_workers
+    const [analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers] = createSignal("");//analyzerFastRunerExecutor_max_workers
+    const [annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers] = createSignal("");//annotationFastRunerExecutor_max_wor
+    const [serverConfigRecived, setServerConfigRecived] = createSignal(false);
+
+    function procesServerConfigs(conf: ConfigServerType[]) {
+        for (var config of conf) {
+            switch (config.option) {
+                case "server_grpc_port_1":
+                    setGrpcPort1(config.value)
+                    break;
+                case "server_grpc_port_2":
+                    setGrpcPort2(config.value)
+                    break;
+                case "server_fastapi_port":
+                    setApiPort(config.value)
+                    break;
+                case "server_fiftyone_port":
+                    setServerFiftyonePort(config.value)
+                    break;
+                case "server_fiftyone_address":
+                    setServerFiftyoneAddress(config.value)
+                    break;
+                case "web_address":
+                    setWebAddress(config.value)
+                    break;
+                case "server_grpc_max_workers_1":
+                    set_server_grpc_max_workers_1(config.value)
+                    break;
+                case "server_grpc_max_workers_2":
+                    set_server_grpc_max_workers_2(config.value)
+                    break;
+                case "storageFastRunerExecutor_max_workers":
+                    set_storageFastRunerExecutor_max_workers(config.value)
+                    break;
+                case "analyzerFastRunerExecutor_max_workers":
+                    set_analyzerFastRunerExecutor_max_workers(config.value)
+                    break;
+                case "annotationFastRunerExecutor_max_workers":
+                    set_annotationFastRunerExecutor_max_workers(config.value)
+                    break;
+                case "analysis_minimum_delay":
+                    set_analysis_minimum_delay(config.value)
+                    break;
+            }
+        }
+    }
+
+    async function fetchServerConfigs(request = `http://${address()}:${serverApiPort()}/configurations/`) {
+        var conf = await http<ConfigServerType[]>(request)
+        procesServerConfigs(conf)
+        setServerConfigRecived(true)
+    }
+
+    createEffect(async () => {
+        if (address() != "" && serverApiPort()!="")
+            await fetchServerConfigs(`http://${address()}:${serverApiPort()}/configurations/`)
+    })
+
+    async function saveServerConfig(option: string, value: string) {
+        return await fetch(`http://${address()}:${serverApiPort()}/configurations/`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            body: JSON.stringify({ "option": option, "value": value })
+        });
+    }
+
+    async function saveServerConfigs() {
+        await saveServerConfig("server_grpc_port_1", grpcPort1());
+        await saveServerConfig("server_grpc_port_2", grpcPort2());
+        await saveServerConfig("server_fastapi_port", apiPort());
+        await saveServerConfig("server_fiftyone_port", serverFiftyonePort());
+        await saveServerConfig("server_fiftyone_address", serverFiftyoneAddress());
+        await saveServerConfig("web_address", webAddress());
+        await saveServerConfig("server_grpc_max_workers_1", server_grpc_max_workers_1());
+        await saveServerConfig("server_grpc_max_workers_2", server_grpc_max_workers_2());
+        await saveServerConfig("storageFastRunerExecutor_max_workers", storageFastRunerExecutor_max_workers());
+        await saveServerConfig("analyzerFastRunerExecutor_max_workers", analyzerFastRunerExecutor_max_workers());
+        await saveServerConfig("annotationFastRunerExecutor_max_workers", annotationFastRunerExecutor_max_workers());
+
+        await fetchServerConfigs();
+    }
+
     return [
         conection,
         connectionControl,
@@ -131,6 +309,7 @@ export const makeConnectionContext = (connected = false) => {
         { sorter_conveyor_speed_value, setSorter_conveyor_speed_value },
         { sorter_mode_preference, setSorter_mode_preference },
         { run_conveyor_time_value, setRun_conveyor_time_value },
+        { analysis_minimum_delay, set_analysis_minimum_delay },
         { cameraCompensationRangeMin, setCameraCompensationRangeMin },
         { cameraCompensationRangeMax, setCameraCompensationRangeMax },
         { exposureTimeRangeMin, setExposureTimeRangeMin },
@@ -142,6 +321,24 @@ export const makeConnectionContext = (connected = false) => {
         { state, setState },
         { saveImgSwitchVal, setSaveImgSwitchVal },
         { savedSession, setSavedSession },
+        { serverGrpcPort, setServerGrpcPort },
+        { serverApiPort, setServerApiPort },
+        { serverFiftyonePort, setServerFiftyonePort },
+        { serverFiftyoneAddress, setServerFiftyoneAddress },
+        { address, setAddress },
+        { webConfigRecived, setWebConfigRecived },
+        { fetchWebConfigs, saveWebConfigs },
+        { grpcPort1, setGrpcPort1 },
+        { grpcPort2, setGrpcPort2 },
+        { apiPort, setApiPort },
+        { webAddress, setWebAddress },
+        { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
+        { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
+        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
+        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
+        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { serverConfigRecived, setServerConfigRecived },
+        { fetchServerConfigs, saveServerConfigs },
         {
             conected() {
                 setConection(true)

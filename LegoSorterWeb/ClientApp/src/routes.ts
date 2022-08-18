@@ -3,12 +3,14 @@ import type { RouteDefinition } from 'solid-app-router';
 
 import Home from './pages/home'; 
 import Belt from './pages/belt'; 
-//import Config from './pages/config';
-import AboutData from './pages/about.data';
+import Config from './pages/config';
 import ConfigData from './pages/config.data';
 import PageWrapper from './pages/pageWrapper';
 import RawBelt from './components/rawBelt';
 import Control from './pages/control';
+import About from './pages/about';
+import Sessions from './pages/sessions';
+import ConfigServer from './pages/configServer';
 
 
 export const routes: RouteDefinition[] = [
@@ -41,8 +43,17 @@ export const routes: RouteDefinition[] = [
         children: [
             {
                 path: '/',
-                component: lazy(() => import('./pages/about')),
-                data: AboutData,
+                component: About,
+            }
+        ]
+    },
+    {
+        path: '/sessions',
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: Sessions,
             }
         ]
     },
@@ -52,12 +63,26 @@ export const routes: RouteDefinition[] = [
         children: [
             {
                 path: '/',
-                component: lazy(() => import('./pages/config')),
+                component: Config,
+                //component: lazy(() => import('./pages/config')),
                 data: ConfigData,
             }
         ]
         
-    }, {
+    },
+    {
+        path: '/configServer',
+        component: PageWrapper,
+        children: [
+            {
+                path: '/',
+                component: ConfigServer,
+                //data: ConfigData,
+            }
+        ]
+
+    },
+    {
         path: '/control',
         component: PageWrapper,
         children: [

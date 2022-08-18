@@ -17,6 +17,7 @@ export default function PageWrapper() {
         { sorter_conveyor_speed_value, setSorter_conveyor_speed_value },
         { sorter_mode_preference, setSorter_mode_preference },
         { run_conveyor_time_value, setRun_conveyor_time_value },
+        { analysis_minimum_delay, set_analysis_minimum_delay },
         { cameraCompensationRangeMin, setCameraCompensationRangeMin },
         { cameraCompensationRangeMax, setCameraCompensationRangeMax },
         { exposureTimeRangeMin, setExposureTimeRangeMin },
@@ -28,6 +29,24 @@ export default function PageWrapper() {
         { state, setState },
         { saveImgSwitchVal, setSaveImgSwitchVal },
         { savedSession, setSavedSession },
+        { serverGrpcPort, setServerGrpcPort },
+        { serverApiPort, setServerApiPort },
+        { serverFiftyonePort, setServerFiftyonePort },
+        { serverFiftyoneAddress, setServerFiftyoneAddress },
+        { address, setAddress },
+        { webConfigRecived, setWebConfigRecived },
+        { fetchWebConfigs, saveWebConfigs },
+        { grpcPort1, setGrpcPort1 },
+        { grpcPort2, setGrpcPort2 },
+        { apiPort, setApiPort },
+        { webAddress, setWebAddress },
+        { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
+        { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
+        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
+        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
+        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { serverConfigRecived, setServerConfigRecived },
+        { fetchServerConfigs, saveServerConfigs },
         { conected, disconected }] = useConection();
     return (
         <>
@@ -44,12 +63,22 @@ export default function PageWrapper() {
                 </div>
                 <div class="flex-none">
                     <a class="btn btn-ghost normal-case text-xl" href="/control">
-                        App Config
+                        App Conf
                     </a>
                 </div>
                 <div class="flex-none">
                     <a class="btn btn-ghost normal-case text-xl" href="/config">
-                        Server Config
+                        Web Conf
+                    </a>
+                </div>
+                <div class="flex-none">
+                    <a class="btn btn-ghost normal-case text-xl" href="/configServer">
+                        Server Conf
+                    </a>
+                </div>
+                <div class="flex-none">
+                    <a class="btn btn-ghost normal-case text-xl" href="/sessions">
+                        Sessions
                     </a>
                 </div>
                 <div class="flex-1">
@@ -75,17 +104,6 @@ export default function PageWrapper() {
                     </div>
                     <div class="flex-none">
                         <Tc />
-                    </div>
-                    <div class="flex-none">
-                        <span> </span>
-                    </div>
-                    <div class="flex-none">
-                        <div class="form-control" >
-                            <label class="input-group">
-                                <span>URL:</span>
-                                <input type="text" readOnly class="input w-24" value={location.pathname} />
-                            </label>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -1,58 +1,54 @@
 import { Component, createEffect, createResource, createSignal, Suspense } from 'solid-js';
 import { useRouteData } from 'solid-app-router';
+import { useConection } from '../contexts/connectionContext';
 
-export default function About() {
-    const serverName = useRouteData<{ address: () => string, port: () => string }>();
-    const [port, setPort] = createSignal("");
-    const [address, setAddress] = createSignal("");
-    const fetchConfigOption = async (option: any) =>
-        (await fetch(`/api/Configuration/${option}/`)).json();
-
-
-    function fetchServerAddress(): Promise<any> {
-        return fetchConfigOption("server_address");
-    }
-
-    function fetchServerPort(): Promise<any> {
-        return fetchConfigOption("server_port");
-    }
-    async function saveConnection() {
-        await fetch(`/api/Configuration/server_address/`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow',
-            body: JSON.stringify({ "Option": "server_address", "Value": address() })
-        });
-        await fetch(`/api/Configuration/server_port/`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow',
-            body: JSON.stringify({ "Option": "server_port", "Value": port() })
-        });
-
-        setAddress(await fetchServerAddress());
-        setPort(await fetchServerPort());
-
-        await fetch(`/api/Sorter/?` + new URLSearchParams({
-            address: address(),
-            port: port(),
-        }), {
-            method: "PATCH",
-        });
-    }
-
-    createEffect(() => {
-        setPort(serverName.port())
-        setAddress(serverName.address())
-    })
+export default function Config() {
+    const [connection, connectionControl,
+        { capture_mode_preference, setCapture_mode_preference },
+        { capture_resolution_value, setCapture_resolution_value },
+        { analysis_resolution_value, setAnalysis_resolution_value },
+        { exposure_compensation_value, setExposure_compensation_value },
+        { manual_settings, setManual_settings },
+        { sensor_exposure_time, setSensor_exposure_time },
+        { sensor_sensitivity, setSensor_sensitivity },
+        { sorter_conveyor_speed_value, setSorter_conveyor_speed_value },
+        { sorter_mode_preference, setSorter_mode_preference },
+        { run_conveyor_time_value, setRun_conveyor_time_value },
+        { analysis_minimum_delay, set_analysis_minimum_delay },
+        { cameraCompensationRangeMin, setCameraCompensationRangeMin },
+        { cameraCompensationRangeMax, setCameraCompensationRangeMax },
+        { exposureTimeRangeMin, setExposureTimeRangeMin },
+        { exposureTimeRangeMax, setExposureTimeRangeMax },
+        { sensitivityRangeMin, setSensitivityRangeMin },
+        { sensitivityRangeMax, setSensitivityRangeMax },
+        { savedAddr, setSavedAddr },
+        { savedWebAddr, setSavedWebAddr },
+        { state, setState },
+        { saveImgSwitchVal, setSaveImgSwitchVal },
+        { savedSession, setSavedSession },
+        { serverGrpcPort, setServerGrpcPort },
+        { serverApiPort, setServerApiPort },
+        { serverFiftyonePort, setServerFiftyonePort },
+        { serverFiftyoneAddress, setServerFiftyoneAddress },
+        { address, setAddress },
+        { webConfigRecived, setWebConfigRecived },
+        { fetchWebConfigs, saveWebConfigs },
+        { grpcPort1, setGrpcPort1 },
+        { grpcPort2, setGrpcPort2 },
+        { apiPort, setApiPort },
+        { webAddress, setWebAddress },
+        { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
+        { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
+        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
+        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
+        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { serverConfigRecived, setServerConfigRecived },
+        { fetchServerConfigs, saveServerConfigs },
+        { conected, disconected }] = useConection();
 
     return (
         <section class="bg-base-300 text-base-800 p-8">
-            <h1 class="text-2xl font-bold">Config</h1>
+            <h1 class="text-2xl font-bold">Web server config</h1>
 
             <p class="mt-4">Server connection data:</p>
 
@@ -68,18 +64,31 @@ export default function About() {
 
             <div class="form-control w-full max-w-xs">
                 <label class="label">
-                    <span class="label-text">Server port</span>
+                    <span class="label-text">Server GRPC port</span>
                 </label>
                 <Suspense fallback={<input type="text" placeholder="port" class="input input-bordered w-full max-w-xs" />}>
-                    <input type="text" placeholder="port" class="input input-bordered w-full max-w-xs" value={port()}
-                        onChange={(e) => { setPort(e.currentTarget.value) }} />
+                    <input type="text" placeholder="port" class="input input-bordered w-full max-w-xs" value={serverGrpcPort()}
+                        onChange={(e) => { setServerGrpcPort(e.currentTarget.value) }} />
                 </Suspense>
                 <label class="label">
                     <span class="label-text"></span>
                 </label>
             </div>
 
-            <button class="btn" innerText="Save" onClick={() => saveConnection()} />
+            <div class="form-control w-full max-w-xs">
+                <label class="label">
+                    <span class="label-text">Server API port</span>
+                </label>
+                <Suspense fallback={<input type="text" placeholder="port" class="input input-bordered w-full max-w-xs" />}>
+                    <input type="text" placeholder="port" class="input input-bordered w-full max-w-xs" value={serverApiPort()}
+                        onChange={(e) => { setServerApiPort(e.currentTarget.value) }} />
+                </Suspense>
+                <label class="label">
+                    <span class="label-text"></span>
+                </label>
+            </div>
+
+            <button class="btn" innerText="Save" onClick={() => saveWebConfigs()} />
 
         </section>
     );
