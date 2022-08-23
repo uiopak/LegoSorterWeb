@@ -9,9 +9,9 @@ const App: Component = () => {
     const Route = useRoutes(routes);
 
     return (
-        <>
+        <div>
             <Route />
-        </>
+        </div>
     );
 };
 

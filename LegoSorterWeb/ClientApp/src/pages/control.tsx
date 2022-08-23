@@ -16,6 +16,9 @@ export default function Control() {
         { sorter_mode_preference, setSorter_mode_preference },
         { run_conveyor_time_value, setRun_conveyor_time_value },
         { analysis_minimum_delay, set_analysis_minimum_delay },
+        { render_belt_speed, set_render_belt_speed },
+        { render_belt_opacity, setRender_belt_opacity },
+        { render_belt_camera_view, setRender_belt_camera_view },
         { cameraCompensationRangeMin, setCameraCompensationRangeMin },
         { cameraCompensationRangeMax, setCameraCompensationRangeMax },
         { exposureTimeRangeMin, setExposureTimeRangeMin },
@@ -93,7 +96,11 @@ export default function Control() {
             sensor_sensitivity: sensor_sensitivity(),
             sorter_conveyor_speed_value: sorter_conveyor_speed_value(),
             sorter_mode_preference: sorter_mode_preference(),
-            run_conveyor_time_value: run_conveyor_time_value()
+            run_conveyor_time_value: run_conveyor_time_value(),
+            analysis_minimum_delay: analysis_minimum_delay(),
+            render_belt_speed: render_belt_speed(),
+            render_belt_opacity: render_belt_opacity(),
+            render_belt_camera_view: render_belt_camera_view()
         }
         connectionControl.send("setConfigs", conf)
     }
@@ -200,6 +207,43 @@ export default function Control() {
                             <label class="label">
                                 <span class="label-text-alt">Minimum time between image processing in ms (0 - ignore))</span>
                             </label>
+                        </div>
+                        <div class="form-control  w-full max-w-xs">
+                            <label class="label cursor-pointer">
+                                <span class="label-text">Render belt like camera</span>
+                                <input type="checkbox" class="toggle" disabled={!connection()} checked={render_belt_camera_view()} onChange={(e) => setRender_belt_camera_view(e.currentTarget.checked)} />
+                                {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
+                            </label>
+                        </div>
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">Render belt speed multiplier:</span>
+                            </label>
+                            <input disabled={!connection()} type="number" step="0.01" placeholder="Type here" class="input input-bordered w-full max-w-xs" value={render_belt_speed()}
+                                onChange={
+                                    (e) => {
+                                        if (isNaN(parseFloat(e.currentTarget.value)))
+                                            e.currentTarget.value = render_belt_speed()
+                                        else {
+                                            set_render_belt_speed(e.currentTarget.value)
+                                        }
+                                    }} />
+
+                        </div>
+                        <div class="form-control w-full max-w-xs">
+                            <label class="label">
+                                <span class="label-text">Render belt opacity:</span>
+                            </label>
+                            <input disabled={!connection()} type="number" min="0" max="100" step="1" placeholder="Type here" class="input input-bordered w-full max-w-xs" value={render_belt_opacity()}
+                                onChange={
+                                    (e) => {
+                                        if (parseInt(e.currentTarget.value) >= 0 && parseInt(e.currentTarget.value) <= 100)
+                                            setRender_belt_opacity(e.currentTarget.value)
+                                        else {
+                                            e.currentTarget.value = render_belt_opacity()
+                                        }
+                                    }} />
+
                         </div>
                         <div class="form-control w-full max-w-xs">
                             <label class="label">
@@ -321,7 +365,16 @@ export default function Control() {
                             <label class="label">
                                 <span class="label-text">How long run conveyor between capture requests (ms)</span>
                             </label>
-                            <input type="number" disabled={!connection()} placeholder="Type here" min="1" step="1" class="input input-bordered w-full max-w-xs" value={run_conveyor_time_value()} />
+                            <input type="number" disabled={!connection()} placeholder="Type here" min="1" step="1" class="input input-bordered w-full max-w-xs" value={run_conveyor_time_value()}
+                                onChange={
+                                    (e) => {
+                                        if (parseInt(e.currentTarget.value) >= 1)
+                                            setRun_conveyor_time_value(e.currentTarget.value)
+                                        else {
+                                            e.currentTarget.value = run_conveyor_time_value()
+                                        }
+                                    }
+                                }/>
                         </div>
                     </div>
                 </div>

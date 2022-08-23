@@ -34,6 +34,9 @@ export default function Belt(props: any) {
         { sorter_mode_preference, setSorter_mode_preference },
         { run_conveyor_time_value, setRun_conveyor_time_value },
         { analysis_minimum_delay, set_analysis_minimum_delay },
+        { render_belt_speed, set_render_belt_speed },
+        { render_belt_opacity, setRender_belt_opacity },
+        { render_belt_camera_view, setRender_belt_camera_view },
         { cameraCompensationRangeMin, setCameraCompensationRangeMin },
         { cameraCompensationRangeMax, setCameraCompensationRangeMax },
         { exposureTimeRangeMin, setExposureTimeRangeMin },
@@ -65,9 +68,15 @@ export default function Belt(props: any) {
         { fetchServerConfigs, saveServerConfigs },
         { conected, disconected }] = useConection();
 
-    const defaultProps = mergeProps({ gui: true }, props);
+    const defaultProps = mergeProps({ gui: true, default_speed: "1", default_opacity: "100", camera_view: false }, props);
 
-    const localSpeed = localStorage.getItem("speed") || "1";
+    if (defaultProps.default_speed != "") {
+        var localSpeed = defaultProps.default_speed as string
+    }
+    else {
+        var localSpeed = localStorage.getItem("speed") || "1.0"
+    }
+
     const [speed, setSpeed] = createSignal(parseFloat(localSpeed));
     createEffect(() => localStorage.setItem("speed", JSON.stringify(speed())))
 
@@ -257,7 +266,11 @@ export default function Belt(props: any) {
             sensor_sensitivity: sensor_sensitivity(),
             sorter_conveyor_speed_value: sorter_conveyor_speed_value(),
             sorter_mode_preference: sorter_mode_preference(),
-            run_conveyor_time_value: run_conveyor_time_value()
+            run_conveyor_time_value: run_conveyor_time_value(),
+            analysis_minimum_delay: analysis_minimum_delay(),
+            render_belt_speed: render_belt_speed(),
+            render_belt_opacity: render_belt_opacity(),
+            render_belt_camera_view: render_belt_camera_view()
         }
         connectionControl.send("setConfigs", conf)
     }
@@ -329,15 +342,28 @@ export default function Belt(props: any) {
 
 
     function min_max2x_z(ymin: number, xmin: number, ymax: number, xmax: number) {
-        let x, z;
-        let median_x = (xmin + xmax) / 2;
-        let median_y = (ymin + ymax) / 2;
-        //TODO values from config, plus camera angle, position and belt width in px
+        if (!defaultProps.camera_view) {
+            let x, z;
+            let median_x = (xmin + xmax) / 2;
+            let median_y = (ymin + ymax) / 2;
+            //TODO values from config, plus camera angle, position and belt width in px
 
-        z = - 10 * (median_x / 1080) + 5 // 10 - width; median_x/1080 - proportion of width; +5 belt edge offest; values reversed - +, becouse view is mirror
-        x = 40 * (median_y / 1920) - 20 // 40 - length; median_y/1920 - proportion of length; -20 belt edge offest;
+            z = - 10 * (median_x / 1080) + 5 // 10 - width; median_x/1080 - proportion of width; +5 belt edge offest; values reversed - +, becouse view is mirror
+            x = 40 * (median_y / 1920) - 20 // 40 - length; median_y/1920 - proportion of length; -20 belt edge offest;
 
-        return [x, z]
+            return [x, z]
+        }
+        else {
+            let x, z;
+            let median_x = (xmin + xmax) / 2;
+            let median_y = (ymin + ymax) / 2;
+            //TODO values from config, plus camera angle, position and belt width in px
+
+            z = - 10 * (median_x / 1080) + 5 // 10 - width; median_x/1080 - proportion of width; +5 belt edge offest; values reversed - +, becouse view is mirror
+            x = 17.78 * (median_y / 1920) // 17.78 - length; median_y/1920 - proportion of length;
+
+            return [x, z]
+        }
     }
 
     connectionSorter.start().catch((err: string) => console.log(err));
@@ -366,7 +392,13 @@ export default function Belt(props: any) {
         renderer.setSize(480, 854);
     }
     else {
-        var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        if (!defaultProps.camera_view) {
+            var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        }
+        else {
+            var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        }
+
 
         renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -377,8 +409,41 @@ export default function Belt(props: any) {
         });
     }
 
-    camera.position.set(22, 24, 0);
-    camera.lookAt(0, 0, 0);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    onCleanup(() => controls.dispose());
+
+    if (!defaultProps.camera_view) {
+        camera.position.set(22, 24, 0);
+    }
+    else {
+        camera.position.set(8.89, 26.4, 0);
+        camera.rotation.z = 0.11;
+        camera.rotation.x = 0.11;
+        camera.rotation.y = 0.11;
+        //camera.up.set(-1,0,0)
+        controls.target.set(8.889999, 0, 0)
+
+        controls.update()
+        const geometry = new THREE.PlaneGeometry(17.78, 10);
+        geometry.rotateX(-Math.PI * 0.5);
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(geometry, material);
+        scene.add(plane);
+        plane.position.set(8.89, 2.01, 0)
+        //const geometry2 = new THREE.PlaneGeometry(10, 10);
+        //geometry2.rotateY(-Math.PI * 0.5);
+        //const material2 = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+        //const plane2 = new THREE.Mesh(geometry2, material2);
+        //plane2.position.set(17.78, 2.01, 0)
+        //scene.add(plane2);
+        //const geometry3 = new THREE.PlaneGeometry(10, 10);
+        //geometry3.rotateY(-Math.PI * 0.5);
+        //const material3 = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
+        //const plane3 = new THREE.Mesh(geometry3, material3);
+        //plane3.position.set(0, 2.01, 0)
+        //scene.add(plane3);
+    }
+
     onCleanup(() => renderer.dispose());
 
     renderer.render(scene, camera);
@@ -396,9 +461,35 @@ export default function Belt(props: any) {
 
     // Instantiate a loader
     const loader = new LDrawLoader();
+    loader.setPartsLibraryPath("/");
+
+    function changeOpacity(className:string) {
+        var elems = document.querySelectorAll(className);
+        var index = 0, length = elems.length;
+        for (; index < length; index++) {
+            (elems[index] as HTMLElement).style.backgroundColor = "transparent";
+        }
+    }
+
+    if (defaultProps.default_opacity!="100") {
+        changeOpacity(':root, [data-theme]')
+        console.log(defaultProps.default_opacity)
+        //var el = document.querySelectorAll(':root, [data-theme]') as Element
+        //el.style.backgroundColor = "transparent";
+        //loader.setResourcePath("/parts/");
+        //loader.setPartsLibraryPath("/");
+    }
+
+    //if (!defaultProps.gui) {
+    //    //loader.setResourcePath("/parts/");
+    //    loader.setPartsLibraryPath("/");
+    //}
 
     function createLego(legoMessage: LegoItemMessage) {
         //let lego: THREE.Group;
+        //var re = new RegExp(/^.*\//);
+        //var my_url_arr = re.exec(window.location.href)!!;
+        //var my_url = my_url_arr[0].replace("rawbelt/","")
         loader.smoothNormals = true;
         loader.load(
             // resource URL
@@ -463,8 +554,9 @@ export default function Belt(props: any) {
     m.map = createTexture();
 
     const band = new THREE.Mesh(g, m);
-
-    scene.add(band);
+    if (!defaultProps.camera_view) {
+        scene.add(band);
+    }
 
     function createTexture() {
         let c: HTMLCanvasElement = document.createElement("canvas");
@@ -517,8 +609,7 @@ export default function Belt(props: any) {
     const gridHelper = new THREE.GridHelper(200, 50);
     scene.add(gridHelper)
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    onCleanup(() => controls.dispose());
+    
 
     //var t: LegoModelItem = { model:, refMes: {heigth:0,partNo:"3001",width:0,x:0,y:0}}
 
@@ -575,7 +666,7 @@ export default function Belt(props: any) {
         }
 
         controls.update();
-        if (m.map != null)
+        if (m.map != null && !defaultProps.camera_view)
             m.map.offset.x += (off - last) * speed()
 
         last = off;
@@ -590,9 +681,9 @@ export default function Belt(props: any) {
             <Show
                 when={defaultProps.gui}
                 fallback={
-                    <>
+                    <div style={{ opacity: parseFloat(defaultProps.default_opacity) / 100 }}>
                         {renderer.domElement}
-                    </>
+                    </div>
                 }
             >
                 <div class="flex flex-wrap">

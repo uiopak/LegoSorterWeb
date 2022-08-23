@@ -15,6 +15,9 @@ export type Configs = {
     sorter_mode_preference: string,
     run_conveyor_time_value: string,
     analysis_minimum_delay: string,
+    render_belt_speed: string,
+    render_belt_opacity: string,
+    render_belt_camera_view: boolean
 };
 
 export type ConfigsConstraints = {
@@ -68,6 +71,9 @@ export const makeConnectionContext = (connected = false) => {
     const [sorter_mode_preference, setSorter_mode_preference] = createSignal("0");
     const [run_conveyor_time_value, setRun_conveyor_time_value] = createSignal("500");
     const [analysis_minimum_delay, set_analysis_minimum_delay] = createSignal("0");
+    const [render_belt_speed, set_render_belt_speed] = createSignal("1");
+    const [render_belt_opacity, setRender_belt_opacity] = createSignal("75");
+    const [render_belt_camera_view, setRender_belt_camera_view] = createSignal(false);
 
     connectionControl.on("sendConfigs", conf => {
         var config2 = conf as Configs
@@ -82,6 +88,9 @@ export const makeConnectionContext = (connected = false) => {
         setSorter_mode_preference(config2.sorter_mode_preference)
         setRun_conveyor_time_value(config2.run_conveyor_time_value)
         set_analysis_minimum_delay(config2.analysis_minimum_delay)
+        set_render_belt_speed(config2.render_belt_speed)
+        setRender_belt_opacity(config2.render_belt_opacity)
+        setRender_belt_camera_view(config2.render_belt_camera_view)
     })
 
     const [cameraCompensationRangeMin, setCameraCompensationRangeMin] = createSignal(0);
@@ -251,9 +260,6 @@ export const makeConnectionContext = (connected = false) => {
                 case "annotationFastRunerExecutor_max_workers":
                     set_annotationFastRunerExecutor_max_workers(config.value)
                     break;
-                case "analysis_minimum_delay":
-                    set_analysis_minimum_delay(config.value)
-                    break;
             }
         }
     }
@@ -265,7 +271,7 @@ export const makeConnectionContext = (connected = false) => {
     }
 
     createEffect(async () => {
-        if (address() != "" && serverApiPort()!="")
+        if (address() != "" && serverApiPort() != "")
             await fetchServerConfigs(`http://${address()}:${serverApiPort()}/configurations/`)
     })
 
@@ -310,6 +316,9 @@ export const makeConnectionContext = (connected = false) => {
         { sorter_mode_preference, setSorter_mode_preference },
         { run_conveyor_time_value, setRun_conveyor_time_value },
         { analysis_minimum_delay, set_analysis_minimum_delay },
+        { render_belt_speed, set_render_belt_speed },
+        { render_belt_opacity, setRender_belt_opacity },
+        { render_belt_camera_view, setRender_belt_camera_view },
         { cameraCompensationRangeMin, setCameraCompensationRangeMin },
         { cameraCompensationRangeMax, setCameraCompensationRangeMax },
         { exposureTimeRangeMin, setExposureTimeRangeMin },

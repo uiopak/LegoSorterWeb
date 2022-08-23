@@ -12,5 +12,9 @@
         public int sorter_conveyor_speed_value { get; set; }
         public string sorter_mode_preference { get; set; }
         public string run_conveyor_time_value { get; set; }
+        public string analysis_minimum_delay { get; set; }
+        public string render_belt_speed { get; set; }
+        public string render_belt_opacity { get; set; }
+        public bool render_belt_camera_view { get; set; }
     }
 }
