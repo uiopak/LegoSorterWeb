@@ -144,6 +144,17 @@ export default function Belt(props: any) {
         sendAction("analyzeFast")
     }
 
+    function startStopNormalAnalyze() {
+        sendAction("analyze")
+    }
+
+    function startStopSort() {
+        sendAction("sort")
+    }
+
+    function startStopSortMachine() {
+        sendAction("sortMachine")
+    }
 
     function sendNavigation(navigation: string) {
         connectionControl.send("navigation", navigation)
@@ -777,10 +788,35 @@ export default function Belt(props: any) {
                                                     
                                                     <Match when={state() == "analyzeFragment" || state() == "analyzeFragmentAnalysisStarted"}>
                                                         {/*<Match when={navigationSwitch() == "analyze"}>*/}
+                                                        <Show when={state() == "analyzeFragmentAnalysisStarted"} fallback={
+                                                            <button class="btn w-48" disabled={!connection()} innerText="Start Analyze" onClick={() => startStopNormalAnalyze()} />
+                                                        }>
+                                                            <button class="btn w-48" disabled={!connection()} innerText="Stop Analyze" onClick={() => startStopNormalAnalyze()} />
+                                                        </Show>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
-                                                    <Match when={state() == "sortFragment" || state() == "sortFragmentSortingStarted"}>
+                                                    <Match when={state() == "sortFragmentOn" || state() == "sortFragmentOff" || state() == "sortFragmentSortingStartedOn" || state() == "sortFragmentSortingStartedOff"}>
                                                         {/*<Match when={navigationSwitch() == "sort"}>*/}
+                                                        <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
+                                                            <div class="card-body">
+                                                                <div class="flex flex-row">
+                                                                    <div class="basis-1/2 justify-items-center grid ">
+                                                                        <Show when={state() == "sortFragmentSortingStartedOn" || state() == "sortFragmentSortingStartedOff"} fallback={
+                                                                            <button class="btn w-24" disabled={!connection()} innerText="Start Sorting" onClick={() => startStopSort()} />
+                                                                        }>
+                                                                            <button class="btn w-24" disabled={!connection()} innerText="Stop Sorting" onClick={() => startStopSort()} />
+                                                                        </Show>
+                                                                    </div>
+                                                                    <div class="basis-1/2 justify-items-center grid ">
+                                                                        <Show when={state() == "sortFragmentOn" || state() == "sortFragmentSortingStartedOn"} fallback={
+                                                                            <button class="btn w-24" disabled={!connection()} innerText="Start Machine" onClick={() => startStopSortMachine()} />
+                                                                        }>
+                                                                            <button class="btn w-24" disabled={!connection()} innerText="Stop Machine" onClick={() => startStopSortMachine()} />
+                                                                        </Show>
+                                                                    </div>                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
                                                     <Match when={state() == "analyzeFastFragment" || state() =="analyzeFastFragmentAnalysisStarted"}>
