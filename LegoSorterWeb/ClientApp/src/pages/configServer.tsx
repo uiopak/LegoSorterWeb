@@ -1,5 +1,5 @@
 import { Component, createEffect, createResource, createSignal, Suspense } from 'solid-js';
-import { useRouteData } from 'solid-app-router';
+import { useRouteData } from '@solidjs/router';
 import { useConection, http } from '../contexts/connectionContext';
 
 export default function ConfigServer() {

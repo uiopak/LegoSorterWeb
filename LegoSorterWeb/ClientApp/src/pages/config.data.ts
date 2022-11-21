@@ -1,4 +1,4 @@
-import type { RouteDataFunc } from 'solid-app-router';
+import type { RouteDataFunc } from '@solidjs/router';
 import { createResource } from 'solid-js';
 
 const fetchConfigOption = async (option: any) =>

@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'solid-app-router';
+import { useParams, useSearchParams } from '@solidjs/router';
 import Belt from '../pages/belt';
 
 export default function RawBelt() {

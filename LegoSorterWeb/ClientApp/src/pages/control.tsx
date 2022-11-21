@@ -1,5 +1,5 @@
 import { Component, createContext, createEffect, createResource, createSignal, onCleanup, onMount, Suspense, useContext } from 'solid-js';
-import { useRouteData } from 'solid-app-router';
+import { useRouteData } from '@solidjs/router';
 import * as signalR from "@microsoft/signalr";
 import { Configs, useConection } from "../contexts/connectionContext"
 

@@ -1,4 +1,4 @@
-﻿import { Outlet } from "solid-app-router";
+﻿import { Outlet } from "@solidjs/router";
 import { Show, Switch } from "solid-js";
 import Tc from "../components/tc";
 import { useConection } from "../contexts/connectionContext";
@@ -54,46 +54,48 @@ export default function PageWrapper() {
     return (
         <>
             <div class="navbar bg-base-200 gap-1">
-                <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/">
-                        Home
-                    </a>
-                </div>
-                <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/belt">
-                        Belt
-                    </a>
-                </div>
-                <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/control">
-                        App Conf
-                    </a>
-                </div>
-                <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/config">
-                        Web Conf
-                    </a>
-                </div>
-                <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/configServer">
-                        Server Conf
-                    </a>
-                </div>
-                <div class="flex-none">
-                    <a class="btn btn-ghost normal-case text-xl" href="/sessions">
-                        Sessions
-                    </a>
-                </div>
-                <div class="flex-1">
-                    <a class="btn btn-ghost normal-case text-xl" href="/about">
-                        About
-                    </a>
-                </div>
-                {/*<div class="flex-1">*/}
-                {/*    <a class="btn btn-ghost normal-case text-xl" href="/error">*/}
-                {/*        Error*/}
-                {/*    </a>*/}
-                {/*</div>*/}
+                <ul class="menu menu-horizontal rounded-box flex-1">
+                    <li>
+                        <a class="normal-case text-xl font-medium" href="/">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a class="normal-case text-xl font-medium" href="/belt">
+                            Belt
+                        </a>
+                    </li>
+                    <li>
+                        <a class="normal-case text-xl font-medium" href="/sessions">
+                            Sessions
+                        </a>
+                    </li>
+                    <li tabindex="0">
+                        <span class="normal-case text-xl font-medium">Config</span>
+                        <ul tabindex="0" class="rounded-box bg-base-200 z-50">
+                            <li>
+                                <a class="normal-case text-xl" href="/control">
+                                    App Conf
+                                </a>
+                            </li>
+                            <li>
+                                <a class="normal-case text-xl" href="/config">
+                                    Web Conf
+                                </a>
+                            </li>
+                            <li>
+                                <a class="normal-case text-xl" href="/configServer">
+                                    Server Conf
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="normal-case text-xl font-medium" href="/about">
+                            About
+                        </a>
+                    </li>
+                </ul>
                 <div class="gap-1">
                     <div class="tooltip tooltip-bottom flex-none" data-tip="Check conection state">
                         <button class="btn btn-ghost  bg-base-100 normal-case text-xl" onClick={() => {
