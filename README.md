@@ -26,3 +26,30 @@ dotnet publish -c Release
 ```commandline
 dotnet published/LegoSorterWeb.dll
 ```
+
+## How to run Docker
+1. Clone repository
+2. Build docker image
+
+Run from repository root (directory containing README.md) 
+```commandline
+docker build -t lego_gui -f .\LegoSorterWeb\Dockerfile .
+```
+3. Create directory to save database
+4. Copy database file to new directory
+Copy `LegoSorterWeb\Database\LegoSorterWebDB.sqlite3` to new directory
+5. Create container
+
+Windows (PowerShell) example:
+```commandline
+docker run -d -p 5002:80 --restart unless-stopped --name lego_gui_sample `
+ --mount type=bind,source=//g/LEGO/.net7test/db,destination=/app/Database lego_gui
+```
+
+6. If LegoSorterServer is running on different machine change ip here: http://ip:5002/config
+
+### Optional information
+Running without mount will work database will keep data between container restarts, but data will be lost after updating container:
+```commandline
+docker run -d -p 5002:80 --restart unless-stopped --name lego_gui_sample lego_gui
+```
