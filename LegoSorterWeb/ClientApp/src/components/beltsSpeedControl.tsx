@@ -266,7 +266,10 @@ export default function BeltsSpeedControl() {
                         <button class="btn btn-square flex-auto" disabled={!serverConfigRecived()} onClick={() => sendStopCameraConveyor()}>
                             Stop Conveyor
                         </button>
-                        <button class="btn btn-square flex-auto" disabled={!serverConfigRecived()} onClick={() => saveServerCameraConveyorConfigs()}>
+                        <button class="btn btn-square flex-auto" disabled={!serverConfigRecived()} onClick={() => {
+                            saveServerCameraConveyorConfigs();
+                            saveServerCameraConveyorTimes();
+                        }}>
                             Save
                         </button>
                     </div>
