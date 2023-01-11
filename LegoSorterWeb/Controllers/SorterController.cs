@@ -57,26 +57,15 @@ namespace LegoSorterWeb.Controllers
             stream.Close();
 
             return NoContent();
-            //img.Image = ByteString.
-            //var res = await client.DetectAndClassifyBricksAsync(img);
-            ////var client = new LegoControl.LegoControlClient(channel);
-            ////var res = client.GetCameraPreview(new Empty());
-            //var res = await client.GetCameraPreviewAsync(new Empty());
-            //var r = new FileContentResult(res.Image.ToByteArray(), "image/jpeg");
-            //r.FileDownloadName = $"{res.Timestamp}.jpeg";
-            ////channel.ShutdownAsync().Wait();
-            //return r;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCameraPreview()
         {
             var client = new LegoControl.LegoControlClient(channel);
-            //var res = client.GetCameraPreview(new Empty());
             var res = await client.GetCameraPreviewAsync(new Empty());
             var r = new FileContentResult(res.Image.ToByteArray(), "image/jpeg");
             r.FileDownloadName = $"{res.Timestamp}.jpeg";
-            //channel.ShutdownAsync().Wait();
             return r;
         }
 

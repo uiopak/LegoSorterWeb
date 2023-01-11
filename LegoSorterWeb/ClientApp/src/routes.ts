@@ -5,7 +5,6 @@ import Home from './pages/home';
 import Belt from './pages/belt';
 import ControlApp from './pages/controlApp';
 import ConfigWeb from './pages/configWeb';
-import ConfigData from './pages/config.data';
 import PageWrapper from './pages/pageWrapper';
 import RawBelt from './components/rawBelt';
 import ConfigApp from './pages/configApp';
@@ -74,8 +73,6 @@ export const routes: RouteDefinition[] = [
             {
                 path: '/',
                 component: ConfigWeb,
-                //component: lazy(() => import('./pages/config')),
-                //data: ConfigData,
             }
         ]
 
@@ -87,7 +84,6 @@ export const routes: RouteDefinition[] = [
             {
                 path: '/',
                 component: ConfigServer,
-                //data: ConfigData,
             }
         ]
 

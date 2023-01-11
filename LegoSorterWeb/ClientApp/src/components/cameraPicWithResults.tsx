@@ -77,15 +77,9 @@ export function CameraPicWithResults(props: any) {
         { keras_model_path, set_keras_model_path },
         { tinyvit_model_path, set_tinyvit_model_path },
         { conected, disconected }] = useConection();
-    ////const { propsMessages, selectedMessage } = props;
     const [imageId, setImageId] = createSignal("");
     const [selectedMessage, setSelectedMessage] = createSignal<MessageItem>();
-    //const [selectedMessageSession, setSelectedMessageSession] = createSignal<string>();
     const [messages, setMessages] = createSignal<MessageItem[]>();
-
-    //const fetchData = async (message: MessageItem) => {
-    //    return await fetch(`http://${address()}:${serverApiPort()}/static/${message.session}/${message.id}.jpg`)
-    //};
 
     const fetchData = async (message: MessageItem) =>
         await fetch(`http://${address()}:${serverApiPort()}/static/${message.session}/${message.id}.jpg`)
@@ -119,13 +113,6 @@ export function CameraPicWithResults(props: any) {
         setMessages(props.propsMessages)
     })
 
-    //createEffect(() => {
-    //    console.log(selectedMessage())
-    //    if (selectedMessage()?.id != undefined && selectedMessage()?.session!=undefined) {
-    //        //displayImage(selectedMessage()?.id!, selectedMessage()?.session!)
-    //    }
-    //})
-
     createEffect(async () => {
         var id = selectedMessage()?.id;
         if (id != undefined && id != imageId() && selectedMessage()?.session != undefined && data.state == "ready") {
@@ -155,40 +142,6 @@ export function CameraPicWithResults(props: any) {
             }
         }
     })
-
-    //async function displayImage(messageId: string, messageSession: string) {
-    //    console.log("displayImage0")
-    //    if (messageId != imageId() && messageSession != "") {
-    //        console.log("displayImage1")
-    //        setImageId(messageId)
-    //        refetch();
-    //        console.log("displayImage11")
-    //        var response = data()
-    //        console.log("displayImage111")
-    //        console.log(response)
-    //        if (response != undefined) {
-    //            console.log("displayImage2")
-    //            const responseBlob = await response.blob()
-    //            if (responseBlob.size > 0) {
-    //                console.log("displayImage3")
-    //                setImage(URL.createObjectURL(responseBlob))
-
-    //                var cnvs = document.getElementById("myCanvas") as HTMLCanvasElement | null;
-    //                if (cnvs != null) {
-    //                    console.log("displayImage4")
-    //                    var ctx = cnvs.getContext("2d");
-    //                    if (ctx != null) {
-    //                        console.log("displayImage5")
-    //                        ctx.clearRect(0, 0, cnvs.width, cnvs.height); // clear canvas
-    //                        if (messages() != undefined) {
-    //                            drawBoxes(messages()!, messageId)
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 
     async function drawBoxes(messages: MessageItem[], id: string) {
         for (var message of messages) {

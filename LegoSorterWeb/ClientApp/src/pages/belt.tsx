@@ -213,13 +213,6 @@ export default function Belt(props: any) {
         .build();
 
     //camera config start
-
-    //const connectionControl = new signalR.HubConnectionBuilder()
-    //    .withUrl('/hubs/control')
-    //    .build();
-
-    //const [manual_settings, setManual_settings] = createSignal(false);
-    //const [sensor_exposure_time, setSensor_exposure_time] = createSignal("");
     const frequency = () => {
         if (sensor_exposure_time() != "") {
             var val = parseFloat(sensor_exposure_time())
@@ -229,49 +222,7 @@ export default function Belt(props: any) {
             return "NaN"
         }
     }
-    //const [sensor_sensitivity, setSensor_sensitivity] = createSignal("");
-
-    //const [exposureTimeRangeMin, setExposureTimeRangeMin] = createSignal(0.0);
-    //const [exposureTimeRangeMax, setExposureTimeRangeMax] = createSignal(0.0);
-    //const [sensitivityRangeMin, setSensitivityRangeMin] = createSignal(0);
-    //const [sensitivityRangeMax, setSensitivityRangeMax] = createSignal(0);
-
-    //type Configs = {
-    //    capture_mode_preference: string,
-    //    capture_resolution_value: string,
-    //    analysis_resolution_value: string,
-    //    exposure_compensation_value: string,
-    //    manual_settings: boolean,
-    //    sensor_exposure_time: string,
-    //    sensor_sensitivity: string,
-    //    sorter_conveyor_speed_value: number,
-    //    sorter_mode_preference: string,
-    //    run_conveyor_time_value: string,
-    //};
-
-    //connectionControl.on("sendConfigs", conf => {
-    //    var config2 = conf as Configs
-    //    setCapture_mode_preference(config2.capture_mode_preference)
-    //    setCapture_resolution_value(config2.capture_resolution_value)
-    //    setAnalysis_resolution_value(config2.analysis_resolution_value)
-    //    setExposure_compensation_value(config2.exposure_compensation_value)
-    //    setManual_settings(config2.manual_settings)
-    //    setSensor_exposure_time(config2.sensor_exposure_time)
-    //    setSensor_sensitivity(config2.sensor_sensitivity)
-    //    setSorter_conveyor_speed_value(config2.sorter_conveyor_speed_value)
-    //    setSorter_mode_preference(config2.sorter_mode_preference)
-    //    setRun_conveyor_time_value(config2.run_conveyor_time_value)
-    //})
-
-    //connectionControl.on("sendConfigsConstraints", conf => {
-    //    var configsConstraints2 = conf as ConfigsConstraints
-    //    setExposureTimeRangeMin(configsConstraints2.exposureTimeRangeMin)
-    //    setExposureTimeRangeMax(configsConstraints2.exposureTimeRangeMax)
-    //    setSensitivityRangeMin(configsConstraints2.sensitivityRangeMin)
-    //    setSensitivityRangeMax(configsConstraints2.sensitivityRangeMax)
-    //    //setConfigsConstraints(configsConstraints2)
-    //})
-
+    
     function getConfig() {
         connectionControl.send("getConfigs")
     }
@@ -285,15 +236,7 @@ export default function Belt(props: any) {
     function getSession() {
         connectionControl.send("getSession")
     }
-    //const [capture_mode_preference, setCapture_mode_preference] = createSignal("0");
-    //const [capture_resolution_value, setCapture_resolution_value] = createSignal("0");
-    //const [analysis_resolution_value, setAnalysis_resolution_value] = createSignal("0");
-    //const [exposure_compensation_value, setExposure_compensation_value] = createSignal("0");
-
-    //const [sorter_conveyor_speed_value, setSorter_conveyor_speed_value] = createSignal(50);
-    //const [sorter_mode_preference, setSorter_mode_preference] = createSignal("0");
-    //const [run_conveyor_time_value, setRun_conveyor_time_value] = createSignal("500");
-
+    
     function setConfig() {
         var conf: Configs = {
             capture_mode_preference: capture_mode_preference(),
@@ -336,21 +279,6 @@ export default function Belt(props: any) {
         }
         setLegoModels([]);
     }
-
-    //type MessageItem = { ymin: number, xmin: number, ymax: number, xmax: number, label: string, score: number, id: string, session: string};
-
-    //const [message_ymin, setMessage_ymin] = createSignal(0);
-    //const [message_xmin, setMessage_xmin] = createSignal(0);
-    //const [message_ymax, setMessage_ymax] = createSignal(0);
-    //const [message_xmax, setMessage_xmax] = createSignal(0);
-    //const [message_label, setMessage_label] = createSignal("");
-    //const [message_score, setMessage_score] = createSignal(0.0);
-
-
-    //type LegoItemMessage = { partNo: string, x: number, y: number, z: number };
-    //type LegoModelItem = { model: THREE.Group, refMes: LegoItemMessage };
-
-    //const [legoItemMessages, setLegoItemMessages] = createStore<LegoItemMessage[]>([]);
 
     const [legoModels, setLegoModels] = createStore<LegoModelItem[]>([]);
 
@@ -407,19 +335,6 @@ export default function Belt(props: any) {
 
     connectionSorter.start().catch((err: string) => console.log(err));
 
-    //const addMessage = (e: SubmitEvent) => {
-    //    e.preventDefault();
-    //    batch(() => {
-    //        connection.send("sendMessage", [{ ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }, { ymin: message_ymin(), xmin: message_xmin(), ymax: message_ymax(), xmax: message_xmax(), label: message_label(), score: message_score() }]);
-    //        setMessage_ymin(0);
-    //        setMessage_xmin(0);
-    //        setMessage_ymax(0);
-    //        setMessage_xmax(0);
-    //        setMessage_label("");
-    //        setMessage_score(0.0);
-    //    });
-    //};
-
     const scene = new THREE.Scene();
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -459,7 +374,6 @@ export default function Belt(props: any) {
         camera.rotation.z = 0.11;
         camera.rotation.x = 0.11;
         camera.rotation.y = 0.11;
-        //camera.up.set(-1,0,0)
         controls.target.set(8.889999, 0, 0)
 
         controls.update()
@@ -469,32 +383,11 @@ export default function Belt(props: any) {
         const plane = new THREE.Mesh(geometry, material);
         scene.add(plane);
         plane.position.set(8.89, 2.01, 0)
-        //const geometry2 = new THREE.PlaneGeometry(10, 10);
-        //geometry2.rotateY(-Math.PI * 0.5);
-        //const material2 = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-        //const plane2 = new THREE.Mesh(geometry2, material2);
-        //plane2.position.set(17.78, 2.01, 0)
-        //scene.add(plane2);
-        //const geometry3 = new THREE.PlaneGeometry(10, 10);
-        //geometry3.rotateY(-Math.PI * 0.5);
-        //const material3 = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
-        //const plane3 = new THREE.Mesh(geometry3, material3);
-        //plane3.position.set(0, 2.01, 0)
-        //scene.add(plane3);
     }
 
     onCleanup(() => renderer.dispose());
 
     renderer.render(scene, camera);
-
-    // Fake lego
-
-    //const geometry2 = new THREE.BoxGeometry(2, 1, 1);
-    //const material2 = new THREE.MeshStandardMaterial();
-    //material2.color = new THREE.Color(0xff6347);
-    //const torus2 = new THREE.Mesh(geometry2, material2);
-    //torus2.position.set(-17, 2.5, 2)
-    //scene.add(torus2);
 
     // Lego
 
@@ -513,22 +406,9 @@ export default function Belt(props: any) {
     if (defaultProps.default_opacity != "100") {
         changeOpacity(':root, [data-theme]')
         console.log(defaultProps.default_opacity)
-        //var el = document.querySelectorAll(':root, [data-theme]') as Element
-        //el.style.backgroundColor = "transparent";
-        //loader.setResourcePath("/parts/");
-        //loader.setPartsLibraryPath("/");
     }
 
-    //if (!defaultProps.gui) {
-    //    //loader.setResourcePath("/parts/");
-    //    loader.setPartsLibraryPath("/");
-    //}
-
     function createLego(legoMessage: LegoItemMessage) {
-        //let lego: THREE.Group;
-        //var re = new RegExp(/^.*\//);
-        //var my_url_arr = re.exec(window.location.href)!!;
-        //var my_url = my_url_arr[0].replace("rawbelt/","")
         loader.smoothNormals = true;
         loader.load(
             // resource URL
@@ -548,7 +428,6 @@ export default function Belt(props: any) {
                 group.position.y += 2;
                 group.position.x = legoMessage.x;
                 group.position.z = legoMessage.z;
-                //group.position.y += 0.05;
                 scene.add(group);
 
                 setLegoModels(legoModels.length,
@@ -585,10 +464,6 @@ export default function Belt(props: any) {
     onCleanup(() => g.dispose());
     const m = new THREE.MeshStandardMaterial();
     onCleanup(() => m.dispose());
-    //{
-    //    side: THREE.DoubleSide,
-    //    map: createTexture()
-    //});
     m.side = THREE.DoubleSide;
     m.map = createTexture();
 
@@ -648,12 +523,6 @@ export default function Belt(props: any) {
     const gridHelper = new THREE.GridHelper(200, 50);
     scene.add(gridHelper)
 
-
-
-    //var t: LegoModelItem = { model:, refMes: {heigth:0,partNo:"3001",width:0,x:0,y:0}}
-
-    //setLegoModels([new LegoModelItem()])
-
     createEffect(() => {
         for (var modelItem of legoModels) {
             var model = modelItem.model;
@@ -668,21 +537,6 @@ export default function Belt(props: any) {
             });
         }
     })
-
-    //function updateObjectsVisibility() {
-    //    for (var modelItem of legoModels) {
-    //        var model = modelItem.model;
-    //        model.traverse(c => {
-    //            if (c.isLineSegments) {
-    //                if (c.isConditionalLine) {
-    //                    c.visible = guiData.conditionalLines;
-    //                } else {
-    //                    c.visible = guiData.displayLines;
-    //                }
-    //            }
-    //        });
-    //    }
-    //}
 
     // Animation Loop
     let clock = new THREE.Clock();
@@ -802,8 +656,6 @@ export default function Belt(props: any) {
                                                 <Show when={!connection()}>
                                                     Connect using button on navbar
                                                 </Show>
-                                                {/*<Match when={state() == "startFragment"}>*/}
-                                                {/*<Match when={navigationSwitch() == "nav"}>*/}
                                                 <Switch fallback={
                                                     <>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateAnalyze()}>Analyze</button>
@@ -812,10 +664,8 @@ export default function Belt(props: any) {
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </>
                                                 }>
-                                                    {/*</Match>*/}
 
                                                     <Match when={state() == "analyzeFragment" || state() == "analyzeFragmentAnalysisStarted"}>
-                                                        {/*<Match when={navigationSwitch() == "analyze"}>*/}
                                                         <Show when={state() == "analyzeFragmentAnalysisStarted"} fallback={
                                                             <button class="btn w-48" disabled={!connection()} innerText="Start Analyze" onClick={() => startStopNormalAnalyze()} />
                                                         }>
@@ -824,7 +674,6 @@ export default function Belt(props: any) {
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
                                                     <Match when={state() == "sortFragmentOn" || state() == "sortFragmentOff" || state() == "sortFragmentSortingStartedOn" || state() == "sortFragmentSortingStartedOff"}>
-                                                        {/*<Match when={navigationSwitch() == "sort"}>*/}
                                                         <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
                                                             <div class="card-body">
                                                                 <div class="flex flex-row">
@@ -848,7 +697,6 @@ export default function Belt(props: any) {
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
                                                     <Match when={state() == "analyzeFastFragment" || state() == "analyzeFastFragmentAnalysisStarted"}>
-                                                        {/*<Match when={navigationSwitch() == "analyzeFast"}>*/}
                                                         <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
                                                             <div class="card-body">
                                                                 <div class="form-control  w-full max-w-xs">
@@ -857,7 +705,6 @@ export default function Belt(props: any) {
                                                                         <input type="checkbox" class="toggle" disabled={!connection()} checked={saveImgSwitchVal()}
                                                                             onChange={(e) => setSaveImgSwitchVal(e.currentTarget.checked)}
                                                                         />
-                                                                        {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-control w-full max-w-xs">
@@ -867,7 +714,6 @@ export default function Belt(props: any) {
                                                                     <input type="text" placeholder="Not set (disabled storage)" class="input input-bordered w-full max-w-xs" value={savedSession()} disabled={!saveImgSwitchVal() || !connection()}
                                                                         onChange={(e) => { setSavedSession(e.currentTarget.value) }} />
                                                                 </div>
-                                                                {/*<button class="btn w-48" disabled={!connection()} innerText="Save" onClick={() => setSession()} />*/}
                                                                 <div class="flex flex-row">
                                                                     <div class="basis-1/2 justify-items-center grid ">
                                                                         <button class="btn w-24" innerText="Refresh" disabled={!connection()} onClick={() => getSession()} />
@@ -907,7 +753,6 @@ export default function Belt(props: any) {
                                                             <label class="label cursor-pointer">
                                                                 <span class="label-text">Custom exposure settings</span>
                                                                 <input type="checkbox" class="toggle" disabled={!connection()} checked={manual_settings()} onChange={(e) => setManual_settings(e.currentTarget.checked)} />
-                                                                {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
                                                             </label>
                                                         </div>
 
@@ -1014,11 +859,6 @@ export default function Belt(props: any) {
                                                                 <span class="label-text">Speed:</span>
                                                                 <span class="label-text-alt">{speed}</span>
                                                             </label>
-                                                            {/*<label class="input-group cursor-pointer">*/}
-                                                            {/*    <span class="label-text bg-base-100">Speed:</span>*/}
-
-                                                            {/*    <span class="label-text bg-base-100">{speed}</span>*/}
-                                                            {/*</label>*/}
                                                             <input type="range" min="0" max="10" step="0.1" value={speed()} class="range" onInput={(e) => setSpeed(parseFloat(e.currentTarget.value))} onChange={(e) => setSpeed(parseFloat(e.currentTarget.value))} />
                                                         </div>
                                                     </div>

@@ -137,7 +137,6 @@ export default function ConfigApp() {
         <div class="bg-base-300   pl-8 pr-8 pb-8 pt-2">
             <h1 class="text-2xl font-bold m-2">Phone app settings</h1>
             <section class="text-base-800 columns-xs">
-                {/*<h1 class="text-2xl font-bold">Config</h1>*/}
                 <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl ml-4 mr-4 mb-4 break-inside-avoid-column">
                     <div class="card-body">
                         <h2 class="card-title">Phone servers configs:</h2>
@@ -145,10 +144,8 @@ export default function ConfigApp() {
                             <label class="label">
                                 <span class="label-text">Sorter server connection address:</span>
                             </label>
-                            {/*<Suspense fallback={<input type="text" placeholder="address" class="input input-bordered w-full max-w-xs" />}>*/}
                             <input type="text" placeholder="address" disabled={!connection()} class="input input-bordered w-full max-w-xs" value={savedAddr()}
                                 onChange={(e) => { setSavedAddr(e.currentTarget.value) }} />
-                            {/*</Suspense>*/}
                             <label class="label">
                                 <span class="label-text-alt">Wrong adress will cause app crash (out of memory)</span>
                             </label>
@@ -158,10 +155,8 @@ export default function ConfigApp() {
                             <label class="label">
                                 <span class="label-text">Web GUI server connection address:</span>
                             </label>
-                            {/*<Suspense fallback={<input type="text" placeholder="address" class="input input-bordered w-full max-w-xs" />}>*/}
                             <input type="text" placeholder="address" disabled={!connection()} class="input input-bordered w-full max-w-xs" value={savedWebAddr()}
                                 onChange={(e) => { setSavedWebAddr(e.currentTarget.value) }} />
-                            {/*</Suspense>*/}
                             <label class="label">
                                 <span class="label-text-alt">Wrong adress will disconect app</span>
                             </label>
@@ -245,7 +240,6 @@ export default function ConfigApp() {
                             <label class="label cursor-pointer">
                                 <span class="label-text">Render belt like camera</span>
                                 <input type="checkbox" class="toggle" disabled={!connection()} checked={render_belt_camera_view()} onChange={(e) => setRender_belt_camera_view(e.currentTarget.checked)} />
-                                {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
                             </label>
                         </div>
                         <div class="form-control w-full max-w-xs">
@@ -305,7 +299,6 @@ export default function ConfigApp() {
                             <label class="label cursor-pointer">
                                 <span class="label-text">Custom exposure settings</span>
                                 <input type="checkbox" class="toggle" disabled={!connection()} checked={manual_settings()} onChange={(e) => setManual_settings(e.currentTarget.checked)} />
-                                {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
                             </label>
                         </div>
 

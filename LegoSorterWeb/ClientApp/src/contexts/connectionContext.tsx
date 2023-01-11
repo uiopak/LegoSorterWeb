@@ -4,37 +4,6 @@ import { Configs, ConfigsConstraints, ConfigServerType } from "../components/typ
 
 // https://www.solidjs.com/guides/typescript#context
 
-//export type Configs = {
-//    capture_mode_preference: string,
-//    capture_resolution_value: string,
-//    analysis_resolution_value: string,
-//    exposure_compensation_value: string,
-//    manual_settings: boolean,
-//    sensor_exposure_time: string,
-//    sensor_sensitivity: string,
-//    sorter_conveyor_speed_value: number,
-//    sorter_mode_preference: string,
-//    run_conveyor_time_value: string,
-//    analysis_minimum_delay: string,
-//    render_belt_speed: string,
-//    render_belt_opacity: string,
-//    render_belt_camera_view: boolean
-//};
-
-//export type ConfigsConstraints = {
-//    cameraCompensationRangeMin: number,
-//    cameraCompensationRangeMax: number,
-//    exposureTimeRangeMin: number,
-//    exposureTimeRangeMax: number,
-//    sensitivityRangeMin: number,
-//    sensitivityRangeMax: number,
-//};
-
-//export interface ConfigServerType {
-//    option: string,
-//    value: string,
-//};
-
 export async function http<T>(
     request: RequestInfo
 ): Promise<T> {
@@ -130,7 +99,7 @@ export const makeConnectionContext = (connected = false) => {
     })
 
     connectionControl.start().catch((err: string) => console.log(err));
-    //const [connectedInterval, setConnectedInterval] = signal
+
     console.log("conectionContext");
     const t = setInterval(
         () => {
@@ -140,10 +109,7 @@ export const makeConnectionContext = (connected = false) => {
                 console.log("timerend");
             }
         }, 1000);
-    //const clock = from((set) => {
-    //    const t = setInterval(() => set(1), 1000);
-    //    return () => clearInterval(t);
-    //});
+
     const fetchWebConfigOption = async (option: any) =>
         (await fetch(`/api/Configuration/${option}/`)).json();
 

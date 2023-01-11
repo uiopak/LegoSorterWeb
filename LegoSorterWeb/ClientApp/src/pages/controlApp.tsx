@@ -334,7 +334,6 @@ export default function ControlApp(props: any) {
                     }
                 };
                 navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                    //setVideoStream(stream)
                     setCameraOpen(true);
                     player.srcObject = stream;
                 });
@@ -975,11 +974,6 @@ export default function ControlApp(props: any) {
                 id: message.id,
                 session: message.session
             });
-            //let x, z;
-            //[x, z] = min_max2x_z(message.ymin, message.xmin, message.ymax, message.xmax);
-            //if (displaySwitch() == "rend-prev") {
-            //    createLego({ partNo: message.label, z: z, x: x, y: 0 });
-            //}
         }
         if (autoShowNewest()) {
             setSelectedSortMessage(sortMessages[messageIndex]);
@@ -1026,7 +1020,6 @@ export default function ControlApp(props: any) {
     camera.rotation.z = 0.11;
     camera.rotation.x = 0.11;
     camera.rotation.y = 0.11;
-    //camera.up.set(-1,0,0)
     controls.target.set(8.889999, 0, 0)
 
     controls.update()
@@ -1061,10 +1054,6 @@ export default function ControlApp(props: any) {
     }
 
     function createLego(legoMessage: LegoItemMessage) {
-        //let lego: THREE.Group;
-        //var re = new RegExp(/^.*\//);
-        //var my_url_arr = re.exec(window.location.href)!!;
-        //var my_url = my_url_arr[0].replace("rawbelt/","")
         loader.smoothNormals = true;
         loader.load(
             // resource URL
@@ -1084,7 +1073,6 @@ export default function ControlApp(props: any) {
                 group.position.y += 2;
                 group.position.x = legoMessage.x;
                 group.position.z = legoMessage.z;
-                //group.position.y += 0.05;
                 scene.add(group);
 
                 setLegoModels(legoModels.length,
@@ -1157,11 +1145,6 @@ export default function ControlApp(props: any) {
     scene.add(gridHelper)
 
 
-
-    //var t: LegoModelItem = { model:, refMes: {heigth:0,partNo:"3001",width:0,x:0,y:0}}
-
-    //setLegoModels([new LegoModelItem()])
-
     createEffect(() => {
         for (var modelItem of legoModels) {
             var model = modelItem.model;
@@ -1176,21 +1159,6 @@ export default function ControlApp(props: any) {
             });
         }
     })
-
-    //function updateObjectsVisibility() {
-    //    for (var modelItem of legoModels) {
-    //        var model = modelItem.model;
-    //        model.traverse(c => {
-    //            if (c.isLineSegments) {
-    //                if (c.isConditionalLine) {
-    //                    c.visible = guiData.conditionalLines;
-    //                } else {
-    //                    c.visible = guiData.displayLines;
-    //                }
-    //            }
-    //        });
-    //    }
-    //}
 
     // Animation Loop
     let clock = new THREE.Clock();
@@ -1358,7 +1326,6 @@ export default function ControlApp(props: any) {
                                                     <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                 </Match>
                                                 <Match when={state() == "analyzeFastFragment" || state() == "analyzeFastFragmentAnalysisStarted"}>
-                                                    {/*<Match when={navigationSwitch() == "analyzeFast"}>*/}
                                                     <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
                                                         <div class="card-body">
                                                             <div class="form-control  w-fit max-w-xs">
@@ -1367,7 +1334,6 @@ export default function ControlApp(props: any) {
                                                                     <input type="checkbox" class="toggle" disabled={!connection()} checked={saveImgSwitchVal()}
                                                                         onChange={(e) => setSaveImgSwitchVal(e.currentTarget.checked)}
                                                                     />
-                                                                    {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
                                                                 </label>
                                                             </div>
                                                             <div class="form-control w-fit max-w-xs">
@@ -1377,7 +1343,6 @@ export default function ControlApp(props: any) {
                                                                 <input type="text" placeholder="Not set (disabled storage)" class="input input-bordered w-fit max-w-xs" value={savedSession()} disabled={!saveImgSwitchVal() || !connection()}
                                                                     onChange={(e) => { setSavedSession(e.currentTarget.value) }} />
                                                             </div>
-                                                            {/*<button class="btn w-48" disabled={!connection()} innerText="Save" onClick={() => setSession()} />*/}
                                                             <div class="flex flex-row">
                                                                 <div class="basis-1/2 justify-items-center grid ">
                                                                     <button class="btn w-24" innerText="Refresh" disabled={!connection()} onClick={() => getSession()} />
@@ -1417,7 +1382,6 @@ export default function ControlApp(props: any) {
                                                         <label class="label cursor-pointer">
                                                             <span class="label-text">Custom exposure settings</span>
                                                             <input type="checkbox" class="toggle" disabled={!connection()} checked={manual_settings()} onChange={(e) => setManual_settings(e.currentTarget.checked)} />
-                                                            {/*<input type="checkbox" class="toggle" checked={manual_settings()} onChange={(e) => setConfig(c => { c.manual_settings = e.currentTarget.checked; return c})} />*/}
                                                         </label>
                                                     </div>
 
@@ -1574,7 +1538,8 @@ export default function ControlApp(props: any) {
                                     Test send file
                                 </div>
                                 <div class="collapse-content">
-                                    <input type="file" class="file-input file-input-bordered w-fit m-1" accept=".jpg,.jpeg" />
+                                    {/*<input type="file" class="file-input file-input-bordered w-fit m-1" accept=".jpg,.jpeg" />*/}
+                                    <input type="file" class="file-input file-input-bordered w-fit m-1" accept="image/jpeg" />
                                     {/*<input type="file" class="file-input file-input-bordered w-fit m-1" accept="image/*" />*/}
                                     <div class="form-control w-fit">
                                         <label class="label">
@@ -1618,22 +1583,18 @@ export default function ControlApp(props: any) {
                                         </div>
                                         <button class="btn m-1" innerText="Get Cameras" onClick={() => getCameras()} />
                                     </div>
-                                    {/*<input type="number" min="50" value="50" />*/}
                                     <select class="select select-bordered w-full max-w-xs" onChange={(e) => set_selected_mediaDevice_idx((e.currentTarget.selectedIndex - 1))}>
                                         <option disabled selected>Not selected</option>
                                         <For each={mediaDevices()}>
                                             {(mediaDevice, i) => {
-                                                /* if (mediaDevice.kind == "videoinput")*/
                                                 return <>
                                                     <option selected={selected_mediaDevice_idx() == i()}>{mediaDevice.label}</option>
                                                 </>
-                                                //<img src={fetchPhoto(mes.session,mes.id)} class="w-[480px] h-[854px] max-w-none" />
                                             }
                                             }
                                         </For>
                                     </select>
                                     <button class="btn m-1" disabled={selected_mediaDevice_idx() == undefined} innerText="Open Camera" onClick={() => openCamera()} />
-                                    {/*                                    <button class="btn m-1" disabled={selected_mediaDevice_idx() == undefined} innerText="Get Img" onClick={() => cameraToCanvas()} />*/}
                                     <video id="player" width={`480px`} height={`270px`} autoplay controls></video>
                                     <div class=" w-[480px] h-[854px] hidden">
                                         <canvas id="canvas" width={`${camera_width()}px`} height={`${camera_heigth()}px`} class="w-[480px] h-[854px] max-w-none"></canvas>
@@ -1742,7 +1703,6 @@ export default function ControlApp(props: any) {
                                                 {/*<div onClick={() => displayImage(mes)}>Label: {mes.label} Score:{mes.score} ymin:{mes.ymin} xmin:{mes.xmin} ymax:{mes.ymax} xmax:{mes.xmax} id:{mes.id} session:{mes.session}</div>*/}
                                             </div>
                                         </>
-                                        //<img src={fetchPhoto(mes.session,mes.id)} class="w-[480px] h-[854px] max-w-none" />
                                     }
                                     }
                                 </For>
@@ -1759,9 +1719,7 @@ export default function ControlApp(props: any) {
                                     {(mes, i) => {
                                         return <>
                                             <div >Label: {mes.label} Score:{mes.score} Info:{mes.info}</div>
-                                            {/*<div onClick={() => displayImage(mes)}>Label: {mes.label} Score:{mes.score} ymin:{mes.ymin} xmin:{mes.xmin} ymax:{mes.ymax} xmax:{mes.xmax} id:{mes.id} session:{mes.session}</div>*/}
                                         </>
-                                        //<img src={fetchPhoto(mes.session,mes.id)} class="w-[480px] h-[854px] max-w-none" />
                                     }
                                     }
                                 </For>

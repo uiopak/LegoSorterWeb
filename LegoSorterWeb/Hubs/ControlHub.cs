@@ -6,25 +6,13 @@ namespace LegoSorterWeb.Hubs
     public class ControlHub : Hub
     {
         public async Task SendMessage(IEnumerable<Message> messages)
-        //public async Task SendMessage(int ymin, int xmin, int ymax, int xmax, string label, float score)
         {
             await Clients.All.SendAsync("messageReceived", messages);
         }
-
-        //public async Task Register(String test)
-        ////public async Task SendMessage(int ymin, int xmin, int ymax, int xmax, string label, float score)
-        //{
-        //    await Clients.All.SendAsync("sendPong");
-        //    //await Clients.All.SendAsync("getConfigs");
-        //    //await Clients.All.SendAsync("config", "a","b");
-        //    //await Clients.All.SendAsync("navigation", "analyzeFast");
-        //    //await Clients.All.SendAsync("messageReceived", test);
-        //}
         public async Task sendConfigs(Configs configs)
         {
             await Clients.All.SendAsync("sendConfigs", configs);
         }
-
 
         // Web browser sends to Phone to check if it is connected
         public async Task sendPing()
@@ -102,41 +90,23 @@ namespace LegoSorterWeb.Hubs
         }
 
         public async Task getConfigs()
-        //(String test)
-        //public async Task SendMessage(int ymin, int xmin, int ymax, int xmax, string label, float score)
         {
             await Clients.All.SendAsync("getConfigs");
-            //await Clients.All.SendAsync("getConfigs");
-            //await Clients.All.SendAsync("config", "a","b");
-            //await Clients.All.SendAsync("navigation", "analyzeFast");
-            //await Clients.All.SendAsync("messageReceived", test);
         }
 
         public async Task sendAction(String action)
         {
             await Clients.All.SendAsync("action", "analyzeFast");
-            //await Clients.All.SendAsync("getConfigs");
-            //await Clients.All.SendAsync("config", "a","b");
-            //await Clients.All.SendAsync("navigation", "analyzeFast");
-            //await Clients.All.SendAsync("messageReceived", test);
         }
 
         public async Task navigation(String navigation)
         {
             await Clients.All.SendAsync("navigation", navigation);
-            //await Clients.All.SendAsync("getConfigs");
-            //await Clients.All.SendAsync("config", "a","b");
-            //await Clients.All.SendAsync("navigation", "analyzeFast");
-            //await Clients.All.SendAsync("messageReceived", test);
         }
 
         public async Task action(String action)
         {
             await Clients.All.SendAsync("action", action);
-            //await Clients.All.SendAsync("getConfigs");
-            //await Clients.All.SendAsync("config", "a","b");
-            //await Clients.All.SendAsync("navigation", "analyzeFast");
-            //await Clients.All.SendAsync("messageReceived", test);
         }
     }
 }

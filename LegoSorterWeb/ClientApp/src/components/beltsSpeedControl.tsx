@@ -91,75 +91,6 @@ export default function BeltsSpeedControl() {
 
     return (
         <div>
-            {/*<div class="flex gap-2 flex-wrap w-fit max-w-2xl m-1">*/}
-            {/*Machine server control both conveyor*/}
-            {/*<div class="flex form-control w-96 max-w-xl">*/}
-            {/*    <label class="label">*/}
-            {/*        <span class="label-text">Splitting conveyor</span>*/}
-            {/*    </label>*/}
-            {/*    <div class="gap-2 flex w-full max-w-2xl">*/}
-            {/*        <div class="gap-2 w-full max-w-xs">*/}
-            {/*            <label class="label">*/}
-            {/*                <span class="label-text"></span>*/}
-            {/*                <span class="label-text">Active time</span>*/}
-            {/*            </label>*/}
-            {/*            <input type="number" min="1" max="500" disabled={!serverConfigRecived()} placeholder="Active time" value={splitting_conveyor_active_time()} class="input input-bordered w-full max-w-xs"*/}
-            {/*                onChange={*/}
-            {/*                    (e) => {*/}
-            {/*                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 500)*/}
-            {/*                            set_splitting_conveyor_active_time(e.currentTarget.value)*/}
-            {/*                        else {*/}
-            {/*                            if (e.currentTarget.value != "")*/}
-            {/*                                e.currentTarget.value = splitting_conveyor_active_time()*/}
-            {/*                            else*/}
-            {/*                                set_splitting_conveyor_active_time(e.currentTarget.value)*/}
-            {/*                        }*/}
-
-            {/*                    }}*/}
-            {/*            />*/}
-            {/*            <label class="label">*/}
-            {/*                <input type="range" min="1" max="500" disabled={!serverConfigRecived()} value={splitting_conveyor_active_time()} class="range"*/}
-            {/*                    onChange={(e) => { set_splitting_conveyor_active_time(e.currentTarget.value) }} />*/}
-            {/*            </label>*/}
-            {/*        </div>*/}
-            {/*        <div class="gap-2 w-full max-w-xs">*/}
-            {/*            <label class="label">*/}
-            {/*                <span class="label-text"></span>*/}
-            {/*                <span class="label-text">Break time</span>*/}
-            {/*            </label>*/}
-            {/*            <input type="number" min="1" max="500" placeholder="Stop time" disabled={!serverConfigRecived()} value={splitting_conveyor_break_time()} class="input input-bordered w-full max-w-xs"*/}
-            {/*                onChange={*/}
-            {/*                    (e) => {*/}
-            {/*                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 500)*/}
-            {/*                            set_splitting_conveyor_break_time(e.currentTarget.value)*/}
-            {/*                        else {*/}
-            {/*                            if (e.currentTarget.value != "")*/}
-            {/*                                e.currentTarget.value = splitting_conveyor_break_time()*/}
-            {/*                            else*/}
-            {/*                                set_splitting_conveyor_break_time(e.currentTarget.value)*/}
-            {/*                        }*/}
-
-            {/*                    }}*/}
-            {/*            />*/}
-            {/*            <label class="label">*/}
-            {/*                <input type="range" min="1" max="500" disabled={!serverConfigRecived()} value={splitting_conveyor_break_time()} class="range"*/}
-            {/*                    onChange={(e) => { set_splitting_conveyor_break_time(e.currentTarget.value) }} />*/}
-            {/*            </label>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    <div class="flex gap-2">*/}
-            {/*        <button disabled class="btn btn-ghost btn-square">*/}
-            {/*            Start*/}
-            {/*        </button>*/}
-            {/*        <button disabled class="btn btn-ghost btn-square">*/}
-            {/*            Stop*/}
-            {/*        </button>*/}
-            {/*        <button class="btn btn-ghost btn-square" disabled={!serverConfigRecived()} onClick={() => saveServerSplittingConveyorConfigs()}>*/}
-            {/*            Save*/}
-            {/*        </button>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
             <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box shrink m-1">
                 <input type="checkbox" class="peer" />
                 <div class="collapse-title text-xl font-medium">
@@ -340,8 +271,6 @@ export default function BeltsSpeedControl() {
                         </button>
                     </div>
                 </div>
-
-                {/*</div>*/}
             </div>
         </div>
     )
