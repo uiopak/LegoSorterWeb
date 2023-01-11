@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
 builder.Services.AddDbContext<LegoSorterWebContext>
     (options => options.UseSqlite("Name=LegoSorterWebDB"));
 
@@ -49,6 +52,8 @@ app.MapFallbackToFile("index.html");
 
 app.MapHub<SorterHub>("/hubs/sorter");
 app.MapHub<ControlHub>("/hubs/control");
+
+app.MapReverseProxy();
 
 app.Run();
 

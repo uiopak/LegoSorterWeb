@@ -52,11 +52,38 @@ export default function Sessions() {
         { webAddress, setWebAddress },
         { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
         { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
-        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
-        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
-        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { storage_fast_runer_executor_max_workers, set_storage_fast_runer_executor_max_workers },
+        { analyzer_fast_runer_executor_max_workers, set_analyzer_fast_runer_executor_max_workers },
+        { annotation_fast_runer_executor_max_workers, set_annotation_fast_runer_executor_max_workers },
         { serverConfigRecived, setServerConfigRecived },
         { fetchServerConfigs, saveServerConfigs },
+        { conveyor_local_address, set_conveyor_local_address },
+        { sorter_local_address, set_sorter_local_address },
+        { camera_conveyor_duty_cycle, set_camera_conveyor_duty_cycle },
+        { camera_conveyor_frequency, set_camera_conveyor_frequency },
+        { splitting_conveyor_duty_cycle, set_splitting_conveyor_duty_cycle },
+        { splitting_conveyor_frequency, set_splitting_conveyor_frequency },
+        { saveServerCameraConveyorConfigs, saveServerSplittingConveyorConfigs },
+        { camera_conveyor_active_time, set_camera_conveyor_active_time },
+        { camera_conveyor_wait_time, set_camera_conveyor_wait_time },
+        { sort, set_sort },
+        { saveSort, saveServerCameraConveyorTimes },
+        { crop, set_crop },
+        { saveCrop },
+        { processing_queue_limit, set_processing_queue_limit },
+        { annotation_queue_limit, set_annotation_queue_limit },
+        { storage_queue_limit, set_storage_queue_limit },
+        { crops_queue_limit, set_crops_queue_limit },
+        { last_images_limit, set_last_images_limit },
+        { sort_queue_limit, set_sort_queue_limit },
+        { lego_sorter_classifier, set_lego_sorter_classifier },
+        { lego_sorter_detector, set_lego_sorter_detector },
+        { store_img_override, set_store_img_override },
+        { store_img_session, set_store_img_session },
+        { save_store_img_override, save_store_img_session },
+        { yolov5_model_path, set_yolov5_model_path },
+        { keras_model_path, set_keras_model_path },
+        { tinyvit_model_path, set_tinyvit_model_path },
         { conected, disconected }] = useConection();
 
     const [sessions, setSessions] = createStore<Session[]>([])
@@ -158,35 +185,37 @@ export default function Sessions() {
         <section class="bg-base-300 text-base-800 p-4 ">
             <button class="btn m-4" innerText="Refresh" onClick={() => refresh()} />
             <Show when={!lock()} fallback={
-                <button class="btn w-24  m-4" disabled={true} innerText="Open" />
+                <button class="btn w-24  m-2" disabled={true} innerText="Open" />
             }>
                 <a href={`http://${address()}:${serverFiftyonePort()}/`} class="btn w-24 m-4">Open</a>
             </Show>
-            <h1 class="text-2xl font-bold">Saved sessions:</h1>
-            <For each={sessions}>
-                {(session, i) => (
-                    <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl m-4">
-                        <div class="card-body">
-                            <h2 class="card-title">{session.name}</h2>
-                            <div class="form-control w-full max-w-xs">
+            <h1 class="text-2xl font-bold m-2">Saved sessions:</h1>
+            <div class="columns-xs">
+                <For each={sessions}>
+                    {(session, i) => (
+                        <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl ml-4 mr-4 mb-4 break-inside-avoid-column">
+                            <div class="card-body">
+                                <h2 class="card-title">{session.name}</h2>
+                                <div class="form-control w-full max-w-xs">
 
-                                <div class="flex flex-row">
-                                    <div class="basis-1/2 justify-items-center grid ">
-                                        <Show when={session.started} fallback={
-                                            <button class="btn w-24" innerText="Start" disabled={lock()} onClick={() => startSession(session)} />
-                                        }>
-                                            <button class="btn w-24" innerText="Stop" disabled={lock()} onClick={() => stopSession(session)} />
-                                        </Show>
-                                    </div>
-                                    <div class="basis-1/2 justify-items-center grid ">
-                                        <button class="btn w-24" innerText="Refresh" disabled={lock()} onClick={() => refreshSession(session)} />
+                                    <div class="flex flex-row">
+                                        <div class="basis-1/2 justify-items-center grid ">
+                                            <Show when={session.started} fallback={
+                                                <button class="btn w-24" innerText="Start" disabled={lock()} onClick={() => startSession(session)} />
+                                            }>
+                                                <button class="btn w-24" innerText="Stop" disabled={lock()} onClick={() => stopSession(session)} />
+                                            </Show>
+                                        </div>
+                                        <div class="basis-1/2 justify-items-center grid ">
+                                            <button class="btn w-24" innerText="Refresh" disabled={lock()} onClick={() => refreshSession(session)} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
-            </For>
+                    )}
+                </For>
+            </div>
         </section>
     );
 }

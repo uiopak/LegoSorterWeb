@@ -1,9 +1,10 @@
 import { Component, createContext, createEffect, createResource, createSignal, onCleanup, onMount, Suspense, useContext } from 'solid-js';
 import { useRouteData } from '@solidjs/router';
 import * as signalR from "@microsoft/signalr";
-import { Configs, useConection } from "../contexts/connectionContext"
+import { Configs } from "../components/types"
+import { useConection } from "../contexts/connectionContext"
 
-export default function Control() {
+export default function ConfigApp() {
     const [connection, connectionControl,
         { capture_mode_preference, setCapture_mode_preference },
         { capture_resolution_value, setCapture_resolution_value },
@@ -43,11 +44,38 @@ export default function Control() {
         { webAddress, setWebAddress },
         { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
         { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
-        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
-        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
-        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { storage_fast_runer_executor_max_workers, set_storage_fast_runer_executor_max_workers },
+        { analyzer_fast_runer_executor_max_workers, set_analyzer_fast_runer_executor_max_workers },
+        { annotation_fast_runer_executor_max_workers, set_annotation_fast_runer_executor_max_workers },
         { serverConfigRecived, setServerConfigRecived },
         { fetchServerConfigs, saveServerConfigs },
+        { conveyor_local_address, set_conveyor_local_address },
+        { sorter_local_address, set_sorter_local_address },
+        { camera_conveyor_duty_cycle, set_camera_conveyor_duty_cycle },
+        { camera_conveyor_frequency, set_camera_conveyor_frequency },
+        { splitting_conveyor_duty_cycle, set_splitting_conveyor_duty_cycle },
+        { splitting_conveyor_frequency, set_splitting_conveyor_frequency },
+        { saveServerCameraConveyorConfigs, saveServerSplittingConveyorConfigs },
+        { camera_conveyor_active_time, set_camera_conveyor_active_time },
+        { camera_conveyor_wait_time, set_camera_conveyor_wait_time },
+        { sort, set_sort },
+        { saveSort, saveServerCameraConveyorTimes },
+        { crop, set_crop },
+        { saveCrop },
+        { processing_queue_limit, set_processing_queue_limit },
+        { annotation_queue_limit, set_annotation_queue_limit },
+        { storage_queue_limit, set_storage_queue_limit },
+        { crops_queue_limit, set_crops_queue_limit },
+        { last_images_limit, set_last_images_limit },
+        { sort_queue_limit, set_sort_queue_limit },
+        { lego_sorter_classifier, set_lego_sorter_classifier },
+        { lego_sorter_detector, set_lego_sorter_detector },
+        { store_img_override, set_store_img_override },
+        { store_img_session, set_store_img_session },
+        { save_store_img_override, save_store_img_session },
+        { yolov5_model_path, set_yolov5_model_path },
+        { keras_model_path, set_keras_model_path },
+        { tinyvit_model_path, set_tinyvit_model_path },
         { conected, disconected }] = useConection();
 
     const frequency = () => {
@@ -59,7 +87,7 @@ export default function Control() {
             return "NaN"
         }
     }
-    
+
     onCleanup(() => {
         console.log("cleanup");
     });
@@ -73,7 +101,7 @@ export default function Control() {
     }
 
     function setConnectionConfigs() {
-        connectionControl.send("setConnectionConfigs",savedAddr(),savedWebAddr())
+        connectionControl.send("setConnectionConfigs", savedAddr(), savedWebAddr())
     }
 
     function getConfigsConstraints() {
@@ -86,7 +114,7 @@ export default function Control() {
     }
 
     function setConfig() {
-        var conf: Configs={
+        var conf: Configs = {
             capture_mode_preference: capture_mode_preference(),
             capture_resolution_value: capture_resolution_value(),
             analysis_resolution_value: analysis_resolution_value(),
@@ -106,11 +134,11 @@ export default function Control() {
     }
 
     return (
-        <div class="bg-base-300  p-8 grid gap-4">
-            
-            <section class="text-base-800 flex flex-wrap gap-4">
+        <div class="bg-base-300   pl-8 pr-8 pb-8 pt-2">
+            <h1 class="text-2xl font-bold m-2">Phone app settings</h1>
+            <section class="text-base-800 columns-xs">
                 {/*<h1 class="text-2xl font-bold">Config</h1>*/}
-                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl">
+                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl ml-4 mr-4 mb-4 break-inside-avoid-column">
                     <div class="card-body">
                         <h2 class="card-title">Phone servers configs:</h2>
                         <div class="form-control w-full max-w-xs">
@@ -118,8 +146,8 @@ export default function Control() {
                                 <span class="label-text">Sorter server connection address:</span>
                             </label>
                             {/*<Suspense fallback={<input type="text" placeholder="address" class="input input-bordered w-full max-w-xs" />}>*/}
-                                <input type="text" placeholder="address" disabled={!connection()} class="input input-bordered w-full max-w-xs" value={savedAddr()}
-                                    onChange={(e) => {setSavedAddr(e.currentTarget.value)}} />
+                            <input type="text" placeholder="address" disabled={!connection()} class="input input-bordered w-full max-w-xs" value={savedAddr()}
+                                onChange={(e) => { setSavedAddr(e.currentTarget.value) }} />
                             {/*</Suspense>*/}
                             <label class="label">
                                 <span class="label-text-alt">Wrong adress will cause app crash (out of memory)</span>
@@ -131,8 +159,8 @@ export default function Control() {
                                 <span class="label-text">Web GUI server connection address:</span>
                             </label>
                             {/*<Suspense fallback={<input type="text" placeholder="address" class="input input-bordered w-full max-w-xs" />}>*/}
-                                <input type="text" placeholder="address" disabled={!connection()} class="input input-bordered w-full max-w-xs" value={savedWebAddr()}
-                                    onChange={(e) => { setSavedWebAddr(e.currentTarget.value) }} />
+                            <input type="text" placeholder="address" disabled={!connection()} class="input input-bordered w-full max-w-xs" value={savedWebAddr()}
+                                onChange={(e) => { setSavedWebAddr(e.currentTarget.value) }} />
                             {/*</Suspense>*/}
                             <label class="label">
                                 <span class="label-text-alt">Wrong adress will disconect app</span>
@@ -141,16 +169,16 @@ export default function Control() {
                         <div class="flex flex-row">
                             <div class="basis-1/2 justify-items-center grid ">
                                 <button class="btn w-24" innerText="Refresh" disabled={!connection()} onClick={() => getConnectionConfigs()} />
-                                </div>
+                            </div>
                             <div class="basis-1/2 justify-items-center grid ">
                                 <button class="btn w-24" innerText="Save" disabled={!connection()} onClick={() => setConnectionConfigs()} />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl">
+                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl m-4 break-inside-avoid-column">
                     <div class="card-body">
-                        <h2 class="card-title">Camera settings</h2>
+                        <h2 class="card-title">Camera capture settings</h2>
                         <div class="form-control w-full max-w-xs">
                             <label class="label">
                                 <span class="label-text">Capture mode:</span>
@@ -208,6 +236,11 @@ export default function Control() {
                                 <span class="label-text-alt">Minimum time between image processing in ms (0 - ignore))</span>
                             </label>
                         </div>
+                    </div>
+                </div>
+                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl m-4 break-inside-avoid-column">
+                    <div class="card-body">
+                        <h2 class="card-title">Render settings</h2>
                         <div class="form-control  w-full max-w-xs">
                             <label class="label cursor-pointer">
                                 <span class="label-text">Render belt like camera</span>
@@ -265,8 +298,9 @@ export default function Control() {
                         </div>
                     </div>
                 </div>
-                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl">
+                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl m-4 break-inside-avoid-column">
                     <div class="card-body">
+                        <h2 class="card-title">Camera sensor settings</h2>
                         <div class="form-control  w-full max-w-xs">
                             <label class="label cursor-pointer">
                                 <span class="label-text">Custom exposure settings</span>
@@ -280,7 +314,7 @@ export default function Control() {
                                 <span class="label-text">Sensor exposure time (ms)</span>
                                 <span class="label-text-alt">{frequency()} Hz</span>
                             </label>
-                            <input type="number" step="0.000001" min={exposureTimeRangeMin()} max={exposureTimeRangeMax()} placeholder="Not set" class="input input-bordered w-full max-w-xs" value={sensor_exposure_time()} disabled={!manual_settings()||!connection()}
+                            <input type="number" step="0.000001" min={exposureTimeRangeMin()} max={exposureTimeRangeMax()} placeholder="Not set" class="input input-bordered w-full max-w-xs" value={sensor_exposure_time()} disabled={!manual_settings() || !connection()}
                                 onChange={
                                     (e) => {
                                         if (parseFloat(e.currentTarget.value) >= exposureTimeRangeMin() && parseFloat(e.currentTarget.value) <= exposureTimeRangeMax())
@@ -324,9 +358,9 @@ export default function Control() {
                         </div>
                     </div>
                 </div>
-
-                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl">
+                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl m-4 break-inside-avoid-column">
                     <div class="card-body">
+                        <h2 class="card-title">Sorter settings</h2>
                         <div class="form-control w-full max-w-xs">
                             <label class="label">
                                 <span class="label-text">Conveyor speed</span>
@@ -374,18 +408,18 @@ export default function Control() {
                                             e.currentTarget.value = run_conveyor_time_value()
                                         }
                                     }
-                                }/>
+                                } />
                         </div>
                     </div>
                 </div>
-                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl">
+                <div class="card card-compact w-96 bg-base-100 h-max max-w-xs shadow-xl m-4 break-inside-avoid-column">
                     <div class="card-body items-center">
-                        <button class="btn w-48" disabled={!connection()}  innerText="Save settings" onClick={() => setConfig()} />
-                        <button class="btn w-48" disabled={!connection()}  innerText="Refresh settings" onClick={() => getConfigAndConstraints()} />
+                        <button class="btn w-48" disabled={!connection()} innerText="Save settings" onClick={() => setConfig()} />
+                        <button class="btn w-48" disabled={!connection()} innerText="Refresh settings" onClick={() => getConfigAndConstraints()} />
                     </div>
                 </div>
             </section>
-            
+
         </div>
     );
 }

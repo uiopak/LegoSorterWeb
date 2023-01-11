@@ -17,7 +17,8 @@ import map_ldraw_raw from '../assets/map_ldraw.json?raw';
 import { mergeProps } from "solid-js";
 
 import "./camera.css"
-import { Configs, useConection } from '../contexts/connectionContext';
+import { Configs, LegoModelItem, LegoItemMessage, MessageItem } from "../components/types"
+import { useConection } from '../contexts/connectionContext';
 
 
 
@@ -61,11 +62,38 @@ export default function Belt(props: any) {
         { webAddress, setWebAddress },
         { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
         { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
-        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
-        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
-        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { storage_fast_runer_executor_max_workers, set_storage_fast_runer_executor_max_workers },
+        { analyzer_fast_runer_executor_max_workers, set_analyzer_fast_runer_executor_max_workers },
+        { annotation_fast_runer_executor_max_workers, set_annotation_fast_runer_executor_max_workers },
         { serverConfigRecived, setServerConfigRecived },
         { fetchServerConfigs, saveServerConfigs },
+        { conveyor_local_address, set_conveyor_local_address },
+        { sorter_local_address, set_sorter_local_address },
+        { camera_conveyor_duty_cycle, set_camera_conveyor_duty_cycle },
+        { camera_conveyor_frequency, set_camera_conveyor_frequency },
+        { splitting_conveyor_duty_cycle, set_splitting_conveyor_duty_cycle },
+        { splitting_conveyor_frequency, set_splitting_conveyor_frequency },
+        { saveServerCameraConveyorConfigs, saveServerSplittingConveyorConfigs },
+        { camera_conveyor_active_time, set_camera_conveyor_active_time },
+        { camera_conveyor_wait_time, set_camera_conveyor_wait_time },
+        { sort, set_sort },
+        { saveSort, saveServerCameraConveyorTimes },
+        { crop, set_crop },
+        { saveCrop },
+        { processing_queue_limit, set_processing_queue_limit },
+        { annotation_queue_limit, set_annotation_queue_limit },
+        { storage_queue_limit, set_storage_queue_limit },
+        { crops_queue_limit, set_crops_queue_limit },
+        { last_images_limit, set_last_images_limit },
+        { sort_queue_limit, set_sort_queue_limit },
+        { lego_sorter_classifier, set_lego_sorter_classifier },
+        { lego_sorter_detector, set_lego_sorter_detector },
+        { store_img_override, set_store_img_override },
+        { store_img_session, set_store_img_session },
+        { save_store_img_override, save_store_img_session },
+        { yolov5_model_path, set_yolov5_model_path },
+        { keras_model_path, set_keras_model_path },
+        { tinyvit_model_path, set_tinyvit_model_path },
         { conected, disconected }] = useConection();
 
     const defaultProps = mergeProps({ gui: true, default_speed: "1", default_opacity: "100", camera_view: false }, props);
@@ -106,7 +134,7 @@ export default function Belt(props: any) {
         var response = data()
         if (response != undefined) {
             const responseBlob = await response.blob()
-            if(responseBlob.size>0)
+            if (responseBlob.size > 0)
                 setImage(URL.createObjectURL(responseBlob))
         }
     }
@@ -309,7 +337,7 @@ export default function Belt(props: any) {
         setLegoModels([]);
     }
 
-    type MessageItem = { ymin: number, xmin: number, ymax: number, xmax: number, label: string, score: number };
+    //type MessageItem = { ymin: number, xmin: number, ymax: number, xmax: number, label: string, score: number, id: string, session: string};
 
     //const [message_ymin, setMessage_ymin] = createSignal(0);
     //const [message_xmin, setMessage_xmin] = createSignal(0);
@@ -319,8 +347,8 @@ export default function Belt(props: any) {
     //const [message_score, setMessage_score] = createSignal(0.0);
 
 
-    type LegoItemMessage = { partNo: string, x: number, y: number, z: number };
-    type LegoModelItem = { model: THREE.Group, refMes: LegoItemMessage };
+    //type LegoItemMessage = { partNo: string, x: number, y: number, z: number };
+    //type LegoModelItem = { model: THREE.Group, refMes: LegoItemMessage };
 
     //const [legoItemMessages, setLegoItemMessages] = createStore<LegoItemMessage[]>([]);
 
@@ -472,9 +500,9 @@ export default function Belt(props: any) {
 
     // Instantiate a loader
     const loader = new LDrawLoader();
-    loader.setPartsLibraryPath("/");
+    (loader as any).setPartsLibraryPath("/");
 
-    function changeOpacity(className:string) {
+    function changeOpacity(className: string) {
         var elems = document.querySelectorAll(className);
         var index = 0, length = elems.length;
         for (; index < length; index++) {
@@ -482,7 +510,7 @@ export default function Belt(props: any) {
         }
     }
 
-    if (defaultProps.default_opacity!="100") {
+    if (defaultProps.default_opacity != "100") {
         changeOpacity(':root, [data-theme]')
         console.log(defaultProps.default_opacity)
         //var el = document.querySelectorAll(':root, [data-theme]') as Element
@@ -620,7 +648,7 @@ export default function Belt(props: any) {
     const gridHelper = new THREE.GridHelper(200, 50);
     scene.add(gridHelper)
 
-    
+
 
     //var t: LegoModelItem = { model:, refMes: {heigth:0,partNo:"3001",width:0,x:0,y:0}}
 
@@ -774,8 +802,8 @@ export default function Belt(props: any) {
                                                 <Show when={!connection()}>
                                                     Connect using button on navbar
                                                 </Show>
-                                                    {/*<Match when={state() == "startFragment"}>*/}
-                                                        {/*<Match when={navigationSwitch() == "nav"}>*/}
+                                                {/*<Match when={state() == "startFragment"}>*/}
+                                                {/*<Match when={navigationSwitch() == "nav"}>*/}
                                                 <Switch fallback={
                                                     <>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateAnalyze()}>Analyze</button>
@@ -785,7 +813,7 @@ export default function Belt(props: any) {
                                                     </>
                                                 }>
                                                     {/*</Match>*/}
-                                                    
+
                                                     <Match when={state() == "analyzeFragment" || state() == "analyzeFragmentAnalysisStarted"}>
                                                         {/*<Match when={navigationSwitch() == "analyze"}>*/}
                                                         <Show when={state() == "analyzeFragmentAnalysisStarted"} fallback={
@@ -813,13 +841,13 @@ export default function Belt(props: any) {
                                                                         }>
                                                                             <button class="btn w-24" disabled={!connection()} innerText="Stop Machine" onClick={() => startStopSortMachine()} />
                                                                         </Show>
-                                                                    </div>                                                                    
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <button class="btn w-48" disabled={!connection()} onClick={() => navigateBack()}>Back</button>
                                                     </Match>
-                                                    <Match when={state() == "analyzeFastFragment" || state() =="analyzeFastFragmentAnalysisStarted"}>
+                                                    <Match when={state() == "analyzeFastFragment" || state() == "analyzeFastFragmentAnalysisStarted"}>
                                                         {/*<Match when={navigationSwitch() == "analyzeFast"}>*/}
                                                         <div class="card card-compact w-96 bg-base-200 h-max max-w-xs shadow-xl">
                                                             <div class="card-body">

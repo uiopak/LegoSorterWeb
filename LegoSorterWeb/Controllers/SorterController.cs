@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf;
+using Grpc.Core;
 using LegoSorterWeb.Data;
 using LegoSorterWeb.proto;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace LegoSorterWeb.Controllers
         {
             _context = context;
             string address = "127.0.0.1";
-            string port = "50052";
+            string port = "50051";
             if (_context.Configurations != null)
             {
                 var db_address = _context.Configurations.Find("server_address");
@@ -29,7 +30,7 @@ namespace LegoSorterWeb.Controllers
                 {
                     address = db_address.Value;
                 }
-                var db_port = _context.Configurations.Find("server_port");
+                var db_port = _context.Configurations.Find("server_grpc_port");
                 if (db_port != null && db_port.Value != null)
                 {
                     port = db_port.Value;
@@ -40,6 +41,31 @@ namespace LegoSorterWeb.Controllers
             var channelOptions = new List<ChannelOption>();
             channelOptions.Add(new ChannelOption("grpc.max_receive_message_length", 16 * 1024 * 1024));
             this.channel = new Channel($"{address}:{port}", ChannelCredentials.Insecure, channelOptions);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendCameraImg(IFormFile file, [FromForm] string session = "", [FromForm] int rotation = 0)
+        {
+            
+            var client = new LegoAnalysisFast.LegoAnalysisFastClient(channel);
+            var img = new FastImageRequest();
+            img.Session = session;
+            img.Rotation = rotation;
+            Stream stream = file.OpenReadStream();
+            img.Image = await ByteString.FromStreamAsync(stream);
+            client.DetectAndClassifyBricks(img);
+            stream.Close();
+
+            return NoContent();
+            //img.Image = ByteString.
+            //var res = await client.DetectAndClassifyBricksAsync(img);
+            ////var client = new LegoControl.LegoControlClient(channel);
+            ////var res = client.GetCameraPreview(new Empty());
+            //var res = await client.GetCameraPreviewAsync(new Empty());
+            //var r = new FileContentResult(res.Image.ToByteArray(), "image/jpeg");
+            //r.FileDownloadName = $"{res.Timestamp}.jpeg";
+            ////channel.ShutdownAsync().Wait();
+            //return r;
         }
 
         [HttpGet]

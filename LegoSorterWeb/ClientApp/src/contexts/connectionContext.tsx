@@ -1,38 +1,39 @@
 import { createSignal, createContext, useContext, from, onMount, createEffect } from "solid-js";
 import * as signalR from "@microsoft/signalr";
+import { Configs, ConfigsConstraints, ConfigServerType } from "../components/types"
 
 // https://www.solidjs.com/guides/typescript#context
 
-export type Configs = {
-    capture_mode_preference: string,
-    capture_resolution_value: string,
-    analysis_resolution_value: string,
-    exposure_compensation_value: string,
-    manual_settings: boolean,
-    sensor_exposure_time: string,
-    sensor_sensitivity: string,
-    sorter_conveyor_speed_value: number,
-    sorter_mode_preference: string,
-    run_conveyor_time_value: string,
-    analysis_minimum_delay: string,
-    render_belt_speed: string,
-    render_belt_opacity: string,
-    render_belt_camera_view: boolean
-};
+//export type Configs = {
+//    capture_mode_preference: string,
+//    capture_resolution_value: string,
+//    analysis_resolution_value: string,
+//    exposure_compensation_value: string,
+//    manual_settings: boolean,
+//    sensor_exposure_time: string,
+//    sensor_sensitivity: string,
+//    sorter_conveyor_speed_value: number,
+//    sorter_mode_preference: string,
+//    run_conveyor_time_value: string,
+//    analysis_minimum_delay: string,
+//    render_belt_speed: string,
+//    render_belt_opacity: string,
+//    render_belt_camera_view: boolean
+//};
 
-export type ConfigsConstraints = {
-    cameraCompensationRangeMin: number,
-    cameraCompensationRangeMax: number,
-    exposureTimeRangeMin: number,
-    exposureTimeRangeMax: number,
-    sensitivityRangeMin: number,
-    sensitivityRangeMax: number,
-};
+//export type ConfigsConstraints = {
+//    cameraCompensationRangeMin: number,
+//    cameraCompensationRangeMax: number,
+//    exposureTimeRangeMin: number,
+//    exposureTimeRangeMax: number,
+//    sensitivityRangeMin: number,
+//    sensitivityRangeMax: number,
+//};
 
-export interface ConfigServerType {
-    option: string,
-    value: string,
-};
+//export interface ConfigServerType {
+//    option: string,
+//    value: string,
+//};
 
 export async function http<T>(
     request: RequestInfo
@@ -44,7 +45,7 @@ export async function http<T>(
 
 
 export const makeConnectionContext = (connected = false) => {
-    const [conection, setConection] = createSignal(connected);
+    const [connection, setConection] = createSignal(connected);
     const connectionControl = new signalR.HubConnectionBuilder()
         .withUrl('/hubs/control')
         .build();
@@ -184,7 +185,7 @@ export const makeConnectionContext = (connected = false) => {
             redirect: 'follow',
             body: JSON.stringify({ "Option": "server_address", "Value": address() })
         });
-        await fetch(`/api/Configuration/server_port/`, {
+        await fetch(`/api/Configuration/server_grpc_port/`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
@@ -219,10 +220,33 @@ export const makeConnectionContext = (connected = false) => {
     const [serverFiftyoneAddress, setServerFiftyoneAddress] = createSignal("");//server_fiftyone_address
     const [server_grpc_max_workers_1, set_server_grpc_max_workers_1] = createSignal("");//server_grpc_max_workers_1
     const [server_grpc_max_workers_2, set_server_grpc_max_workers_2] = createSignal("");//server_grpc_max_workers_2
-    const [storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers] = createSignal("");//storageFastRunerExecutor_max_workers
-    const [analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers] = createSignal("");//analyzerFastRunerExecutor_max_workers
-    const [annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers] = createSignal("");//annotationFastRunerExecutor_max_wor
+    const [storage_fast_runer_executor_max_workers, set_storage_fast_runer_executor_max_workers] = createSignal("");//storage_fast_runer_executor_max_workers
+    const [analyzer_fast_runer_executor_max_workers, set_analyzer_fast_runer_executor_max_workers] = createSignal("");//analyzer_fast_runer_executor_max_workers
+    const [annotation_fast_runer_executor_max_workers, set_annotation_fast_runer_executor_max_workers] = createSignal("");//annotation_fast_runer_executor_max_workers
     const [serverConfigRecived, setServerConfigRecived] = createSignal(false);
+    const [conveyor_local_address, set_conveyor_local_address] = createSignal("");//conveyor_local_address
+    const [sorter_local_address, set_sorter_local_address] = createSignal("");//sorter_local_address
+    const [camera_conveyor_duty_cycle, set_camera_conveyor_duty_cycle] = createSignal("");//camera_conveyor_duty_cycle
+    const [camera_conveyor_frequency, set_camera_conveyor_frequency] = createSignal("");//camera_conveyor_frequency
+    const [camera_conveyor_active_time, set_camera_conveyor_active_time] = createSignal("");//camera_conveyor_active_time
+    const [camera_conveyor_wait_time, set_camera_conveyor_wait_time] = createSignal("");//camera_conveyor_wait_time
+    const [splitting_conveyor_duty_cycle, set_splitting_conveyor_duty_cycle] = createSignal("");//splitting_conveyor_duty_cycle
+    const [splitting_conveyor_frequency, set_splitting_conveyor_frequency] = createSignal("");//splitting_conveyor_frequency
+    const [sort, set_sort] = createSignal("");//sort
+    const [crop, set_crop] = createSignal("");//crop
+    const [storage_queue_limit, set_storage_queue_limit] = createSignal("");//storage_queue_limit
+    const [processing_queue_limit, set_processing_queue_limit] = createSignal("");//processing_queue_limit
+    const [sort_queue_limit, set_sort_queue_limit] = createSignal("");//sort_queue_limit
+    const [annotation_queue_limit, set_annotation_queue_limit] = createSignal("");//annotation_queue_limit
+    const [crops_queue_limit, set_crops_queue_limit] = createSignal("");//crops_queue_limit
+    const [last_images_limit, set_last_images_limit] = createSignal("");//last_images_limit
+    const [lego_sorter_classifier, set_lego_sorter_classifier] = createSignal("");//lego_sorter_classifier
+    const [lego_sorter_detector, set_lego_sorter_detector] = createSignal("");//lego_sorter_detector
+    const [store_img_override, set_store_img_override] = createSignal("");//store_img_override
+    const [store_img_session, set_store_img_session] = createSignal("");//store_img_session
+    const [yolov5_model_path, set_yolov5_model_path] = createSignal("");//yolov5_model_path
+    const [keras_model_path, set_keras_model_path] = createSignal("");//keras_model_path
+    const [tinyvit_model_path, set_tinyvit_model_path] = createSignal("");//tinyvit_model_path
 
     function procesServerConfigs(conf: ConfigServerType[]) {
         for (var config of conf) {
@@ -251,14 +275,83 @@ export const makeConnectionContext = (connected = false) => {
                 case "server_grpc_max_workers_2":
                     set_server_grpc_max_workers_2(config.value)
                     break;
-                case "storageFastRunerExecutor_max_workers":
-                    set_storageFastRunerExecutor_max_workers(config.value)
+                case "storage_fast_runer_executor_max_workers":
+                    set_storage_fast_runer_executor_max_workers(config.value)
                     break;
-                case "analyzerFastRunerExecutor_max_workers":
-                    set_analyzerFastRunerExecutor_max_workers(config.value)
+                case "analyzer_fast_runer_executor_max_workers":
+                    set_analyzer_fast_runer_executor_max_workers(config.value)
                     break;
-                case "annotationFastRunerExecutor_max_workers":
-                    set_annotationFastRunerExecutor_max_workers(config.value)
+                case "annotation_fast_runer_executor_max_workers":
+                    set_annotation_fast_runer_executor_max_workers(config.value)
+                    break;
+                case "conveyor_local_address":
+                    set_conveyor_local_address(config.value)
+                    break;
+                case "sorter_local_address":
+                    set_sorter_local_address(config.value)
+                    break;
+                case "camera_conveyor_duty_cycle":
+                    set_camera_conveyor_duty_cycle(config.value)
+                    break;
+                case "camera_conveyor_frequency":
+                    set_camera_conveyor_frequency(config.value)
+                    break;
+                case "camera_conveyor_active_time":
+                    set_camera_conveyor_active_time(config.value)
+                    break;
+                case "camera_conveyor_wait_time":
+                    set_camera_conveyor_wait_time(config.value)
+                    break;
+                case "splitting_conveyor_duty_cycle":
+                    set_splitting_conveyor_duty_cycle(config.value)
+                    break;
+                case "splitting_conveyor_frequency":
+                    set_splitting_conveyor_frequency(config.value)
+                    break;
+                case "sort":
+                    set_sort(config.value)
+                    break;
+                case "crop":
+                    set_crop(config.value)
+                    break;
+                case "storage_queue_limit":
+                    set_storage_queue_limit(config.value)
+                    break;
+                case "processing_queue_limit":
+                    set_processing_queue_limit(config.value)
+                    break;
+                case "sort_queue_limit":
+                    set_sort_queue_limit(config.value)
+                    break;
+                case "annotation_queue_limit":
+                    set_annotation_queue_limit(config.value)
+                    break;
+                case "crops_queue_limit":
+                    set_crops_queue_limit(config.value)
+                    break;
+                case "last_images_limit":
+                    set_last_images_limit(config.value)
+                    break;
+                case "lego_sorter_classifier":
+                    set_lego_sorter_classifier(config.value)
+                    break;
+                case "lego_sorter_detector":
+                    set_lego_sorter_detector(config.value)
+                    break;
+                case "store_img_override":
+                    set_store_img_override(config.value)
+                    break;
+                case "store_img_session":
+                    set_store_img_session(config.value)
+                    break;
+                case "yolov5_model_path":
+                    set_yolov5_model_path(config.value)
+                    break;
+                case "keras_model_path":
+                    set_keras_model_path(config.value)
+                    break;
+                case "tinyvit_model_path":
+                    set_tinyvit_model_path(config.value)
                     break;
             }
         }
@@ -295,15 +388,77 @@ export const makeConnectionContext = (connected = false) => {
         await saveServerConfig("web_address", webAddress());
         await saveServerConfig("server_grpc_max_workers_1", server_grpc_max_workers_1());
         await saveServerConfig("server_grpc_max_workers_2", server_grpc_max_workers_2());
-        await saveServerConfig("storageFastRunerExecutor_max_workers", storageFastRunerExecutor_max_workers());
-        await saveServerConfig("analyzerFastRunerExecutor_max_workers", analyzerFastRunerExecutor_max_workers());
-        await saveServerConfig("annotationFastRunerExecutor_max_workers", annotationFastRunerExecutor_max_workers());
+        await saveServerConfig("storage_fast_runer_executor_max_workers", storage_fast_runer_executor_max_workers());
+        await saveServerConfig("analyzer_fast_runer_executor_max_workers", analyzer_fast_runer_executor_max_workers());
+        await saveServerConfig("annotation_fast_runer_executor_max_workers", annotation_fast_runer_executor_max_workers());
+        await saveServerConfig("conveyor_local_address", conveyor_local_address());
+        await saveServerConfig("sorter_local_address", sorter_local_address());
+        await saveServerConfig("camera_conveyor_duty_cycle", camera_conveyor_duty_cycle());
+        await saveServerConfig("camera_conveyor_frequency", camera_conveyor_frequency());
+        await saveServerConfig("splitting_conveyor_duty_cycle", splitting_conveyor_duty_cycle());
+        await saveServerConfig("splitting_conveyor_frequency", splitting_conveyor_frequency());
+        await saveServerConfig("camera_conveyor_active_time", camera_conveyor_active_time());
+        await saveServerConfig("camera_conveyor_wait_time", camera_conveyor_wait_time());
+        await saveServerConfig("sort", sort());
+        await saveServerConfig("crop", crop());
+        await saveServerConfig("processing_queue_limit", processing_queue_limit());
+        await saveServerConfig("annotation_queue_limit", annotation_queue_limit());
+        await saveServerConfig("storage_queue_limit", storage_queue_limit());
+        await saveServerConfig("crops_queue_limit", crops_queue_limit());
+        await saveServerConfig("last_images_limit", last_images_limit());
+        await saveServerConfig("sort_queue_limit", sort_queue_limit());
+        await saveServerConfig("lego_sorter_classifier", lego_sorter_classifier());
+        await saveServerConfig("lego_sorter_detector", lego_sorter_detector());
+        await saveServerConfig("store_img_override", store_img_override());
+        await saveServerConfig("store_img_session", store_img_session());
+        await saveServerConfig("yolov5_model_path", yolov5_model_path());
+        await saveServerConfig("keras_model_path", keras_model_path());
+        await saveServerConfig("tinyvit_model_path", tinyvit_model_path());
 
         await fetchServerConfigs();
     }
 
+    async function saveServerCameraConveyorConfigs() {
+        await saveServerConfig("camera_conveyor_duty_cycle", camera_conveyor_duty_cycle());
+        await saveServerConfig("camera_conveyor_frequency", camera_conveyor_frequency());
+        await fetchServerConfigs();
+    }
+
+    async function saveServerCameraConveyorTimes() {
+        await saveServerConfig("camera_conveyor_active_time", camera_conveyor_active_time());
+        await saveServerConfig("camera_conveyor_wait_time", camera_conveyor_wait_time());
+        await fetchServerConfigs();
+    }
+
+    async function saveSort() {
+        await saveServerConfig("sort", sort());
+        await fetchServerConfigs();
+    }
+
+    async function saveCrop() {
+        await saveServerConfig("crop", crop());
+        await fetchServerConfigs();
+    }
+
+    async function save_store_img_override() {
+        await saveServerConfig("store_img_override", store_img_override());
+        await fetchServerConfigs();
+    }
+
+    async function save_store_img_session() {
+        await saveServerConfig("store_img_session", store_img_session());
+        await fetchServerConfigs();
+    }
+
+
+    async function saveServerSplittingConveyorConfigs() {
+        await saveServerConfig("splitting_conveyor_frequency", splitting_conveyor_frequency());
+        await saveServerConfig("splitting_conveyor_duty_cycle", splitting_conveyor_duty_cycle());
+        await fetchServerConfigs();
+    }
+
     return [
-        conection,
+        connection,
         connectionControl,
         { capture_mode_preference, setCapture_mode_preference },
         { capture_resolution_value, setCapture_resolution_value },
@@ -343,11 +498,38 @@ export const makeConnectionContext = (connected = false) => {
         { webAddress, setWebAddress },
         { server_grpc_max_workers_1, set_server_grpc_max_workers_1 },
         { server_grpc_max_workers_2, set_server_grpc_max_workers_2 },
-        { storageFastRunerExecutor_max_workers, set_storageFastRunerExecutor_max_workers },
-        { analyzerFastRunerExecutor_max_workers, set_analyzerFastRunerExecutor_max_workers },
-        { annotationFastRunerExecutor_max_workers, set_annotationFastRunerExecutor_max_workers },
+        { storage_fast_runer_executor_max_workers, set_storage_fast_runer_executor_max_workers },
+        { analyzer_fast_runer_executor_max_workers, set_analyzer_fast_runer_executor_max_workers },
+        { annotation_fast_runer_executor_max_workers, set_annotation_fast_runer_executor_max_workers },
         { serverConfigRecived, setServerConfigRecived },
         { fetchServerConfigs, saveServerConfigs },
+        { conveyor_local_address, set_conveyor_local_address },
+        { sorter_local_address, set_sorter_local_address },
+        { camera_conveyor_duty_cycle, set_camera_conveyor_duty_cycle },
+        { camera_conveyor_frequency, set_camera_conveyor_frequency },
+        { splitting_conveyor_duty_cycle, set_splitting_conveyor_duty_cycle },
+        { splitting_conveyor_frequency, set_splitting_conveyor_frequency },
+        { saveServerCameraConveyorConfigs, saveServerSplittingConveyorConfigs },
+        { camera_conveyor_active_time, set_camera_conveyor_active_time },
+        { camera_conveyor_wait_time, set_camera_conveyor_wait_time },
+        { sort, set_sort },
+        { saveSort, saveServerCameraConveyorTimes },
+        { crop, set_crop },
+        { saveCrop },
+        { processing_queue_limit, set_processing_queue_limit },
+        { annotation_queue_limit, set_annotation_queue_limit },
+        { storage_queue_limit, set_storage_queue_limit },
+        { crops_queue_limit, set_crops_queue_limit },
+        { last_images_limit, set_last_images_limit },
+        { sort_queue_limit, set_sort_queue_limit },
+        { lego_sorter_classifier, set_lego_sorter_classifier },
+        { lego_sorter_detector, set_lego_sorter_detector },
+        { store_img_override, set_store_img_override },
+        { store_img_session, set_store_img_session },
+        { save_store_img_override, save_store_img_session },
+        { yolov5_model_path, set_yolov5_model_path },
+        { keras_model_path, set_keras_model_path },
+        { tinyvit_model_path, set_tinyvit_model_path },
         {
             conected() {
                 setConection(true)

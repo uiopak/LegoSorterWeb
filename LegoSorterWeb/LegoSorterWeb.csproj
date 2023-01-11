@@ -14,25 +14,26 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.21.9" />
-    <PackageReference Include="Grpc" Version="2.46.5" />
-    <PackageReference Include="Grpc.Tools" Version="2.50.0">
+    <PackageReference Include="Google.Protobuf" Version="3.21.12" />
+    <PackageReference Include="Grpc" Version="2.46.6" />
+    <PackageReference Include="Grpc.Tools" Version="2.51.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.2" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="1.1.1" />
   </ItemGroup>
   
   <ItemGroup>
@@ -53,12 +54,40 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="generated\proto\LegoAnalysis.cs" />
+    <Compile Remove="generated\proto\LegoAnalysisFast.cs" />
+    <Compile Remove="generated\proto\LegoAnalysisFastGrpc.cs" />
+    <Compile Remove="generated\proto\LegoAnalysisGrpc.cs" />
+    <Compile Remove="generated\proto\LegoCapture.cs" />
+    <Compile Remove="generated\proto\LegoCaptureGrpc.cs" />
+    <Compile Remove="generated\proto\LegoControl.cs" />
+    <Compile Remove="generated\proto\LegoControlGrpc.cs" />
+    <Compile Remove="generated\proto\LegoSorter.cs" />
+    <Compile Remove="generated\proto\LegoSorterGrpc.cs" />
+    <Compile Remove="generated\proto\Messages.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="proto\LegoAnalysis.proto" />
     <None Remove="proto\LegoAnalysisFast.proto" />
     <None Remove="proto\LegoCapture.proto" />
     <None Remove="proto\LegoControl.proto" />
     <None Remove="proto\LegoSorter.proto" />
     <None Remove="proto\Messages.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="generated\proto\LegoAnalysis.cs" />
+    <None Include="generated\proto\LegoAnalysisFast.cs" />
+    <None Include="generated\proto\LegoAnalysisFastGrpc.cs" />
+    <None Include="generated\proto\LegoAnalysisGrpc.cs" />
+    <None Include="generated\proto\LegoCapture.cs" />
+    <None Include="generated\proto\LegoCaptureGrpc.cs" />
+    <None Include="generated\proto\LegoControl.cs" />
+    <None Include="generated\proto\LegoControlGrpc.cs" />
+    <None Include="generated\proto\LegoSorter.cs" />
+    <None Include="generated\proto\LegoSorterGrpc.cs" />
+    <None Include="generated\proto\Messages.cs" />
   </ItemGroup>
 
   <ItemGroup>

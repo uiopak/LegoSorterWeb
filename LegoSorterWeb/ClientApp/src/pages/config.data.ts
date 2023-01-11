@@ -10,7 +10,7 @@ function fetchServerAddress(): Promise<any> {
 }
 
 function fetchServerPort(): Promise<any> {
-    return fetchConfigOption("server_port");
+    return fetchConfigOption("server_api_port");
 }
 
 

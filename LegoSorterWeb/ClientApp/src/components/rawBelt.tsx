@@ -9,7 +9,7 @@ export default function RawBelt() {
     if (camera) {
         speed = "0"
     }
-    return(
+    return (
         <Belt gui={false} default_speed={speed} default_opacity={opacity} camera_view={camera} />
     )
 }

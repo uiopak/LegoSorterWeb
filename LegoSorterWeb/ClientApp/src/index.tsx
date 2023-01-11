@@ -7,16 +7,16 @@ import { themeChange } from 'theme-change'
 import { ConectionContext, ConectionProvider, makeConnectionContext } from "./contexts/connectionContext"
 
 
-createEffect(() => {
-    themeChange(false)
-    // 👆 false parameter is required for react project
-})
+//createEffect(() => {
+//    themeChange(false)
+//    // 👆 false parameter is required for react project
+//})
 
 render(
     () => (
         <Router>
             <ConectionProvider>
-            {/*<ConectionContext.Provider value={makeConnectionContext(false) }>*/}
+                {/*<ConectionContext.Provider value={makeConnectionContext(false) }>*/}
                 <App />
             </ConectionProvider>
             {/*</ConectionContext.Provider>*/}

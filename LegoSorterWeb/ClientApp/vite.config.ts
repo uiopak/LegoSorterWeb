@@ -2,11 +2,16 @@ import { defineConfig, normalizePath } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
 import path from 'path'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+//import devtools from 'solid-devtools/vite'
 //import copy from 'rollup-plugin-copy'
 
 export default defineConfig({
   //publicDir: "./src/parts",
     plugins: [
+        //devtools({
+        //    /* additional options */
+        //    autoname: true, // e.g. enable autoname
+        //}),
         solidPlugin(),
         viteStaticCopy({
             targets: [
