@@ -336,10 +336,10 @@ export default function ConfigServer() {
                                 <span class="label-text">camera_conveyor_duty_cycle</span>
                                 <span class="label-text">Duty time</span>
                             </label>
-                            <input type="number" min="1" max="500" disabled={!serverConfigRecived()} placeholder="Camera conveyor Duty time" value={camera_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
+                            <input type="number" min="1" max="100" disabled={!serverConfigRecived()} placeholder="Camera conveyor Duty time" value={camera_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
                                 onChange={
                                     (e) => {
-                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 500)
+                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 100)
                                             set_camera_conveyor_duty_cycle(e.currentTarget.value)
                                         else {
                                             if (e.currentTarget.value != "")
@@ -428,10 +428,10 @@ export default function ConfigServer() {
                                 <span class="label-text">splitting_conveyor_duty_cycle</span>
                                 <span class="label-text">Duty time</span>
                             </label>
-                            <input type="number" min="1" max="500" disabled={!serverConfigRecived()} placeholder="Duty time" value={splitting_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
+                            <input type="number" min="1" max="100" disabled={!serverConfigRecived()} placeholder="Duty time" value={splitting_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
                                 onchange={
                                     (e) => {
-                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 500)
+                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 100)
                                             set_splitting_conveyor_duty_cycle(e.currentTarget.value)
                                         else {
                                             if (e.currentTarget.value != "")

@@ -103,10 +103,10 @@ export default function BeltsSpeedControl() {
                                 <span class="label-text">Splitting conveyor</span>
                                 <span class="label-text">Duty time</span>
                             </label>
-                            <input type="number" min="1" max="500" disabled={!serverConfigRecived()} placeholder="Duty time" value={splitting_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
+                            <input type="number" min="1" max="100" disabled={!serverConfigRecived()} placeholder="Duty time" value={splitting_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
                                 onchange={
                                     (e) => {
-                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 500)
+                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 100)
                                             set_splitting_conveyor_duty_cycle(e.currentTarget.value)
                                         else {
                                             if (e.currentTarget.value != "")
@@ -118,7 +118,7 @@ export default function BeltsSpeedControl() {
                                     }}
                             />
                             <label class="label">
-                                <input type="range" min="1" max="500" disabled={!serverConfigRecived()} value={splitting_conveyor_duty_cycle()} class="range"
+                                <input type="range" min="1" max="100" disabled={!serverConfigRecived()} value={splitting_conveyor_duty_cycle()} class="range"
                                     onchange={(e) => { set_splitting_conveyor_duty_cycle(e.currentTarget.value) }} />
                             </label>
                         </div>
@@ -165,10 +165,10 @@ export default function BeltsSpeedControl() {
                                 <span class="label-text">Camera conveyor</span>
                                 <span class="label-text">Duty time</span>
                             </label>
-                            <input type="number" min="1" max="500" disabled={!serverConfigRecived()} placeholder="Duty time" value={camera_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
+                            <input type="number" min="1" max="100" disabled={!serverConfigRecived()} placeholder="Duty time" value={camera_conveyor_duty_cycle()} class="input input-bordered w-full max-w-xs"
                                 onChange={
                                     (e) => {
-                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 500)
+                                        if (parseInt(e.currentTarget.value) >= 1 && parseInt(e.currentTarget.value) <= 100)
                                             set_camera_conveyor_duty_cycle(e.currentTarget.value)
                                         else {
                                             if (e.currentTarget.value != "")
@@ -180,7 +180,7 @@ export default function BeltsSpeedControl() {
                                     }}
                             />
                             <label class="label">
-                                <input type="range" min="1" max="500" disabled={!serverConfigRecived()} value={camera_conveyor_duty_cycle()} class="range"
+                                <input type="range" min="1" max="100" disabled={!serverConfigRecived()} value={camera_conveyor_duty_cycle()} class="range"
                                     onChange={(e) => { set_camera_conveyor_duty_cycle(e.currentTarget.value) }} />
                             </label>
                         </div>
